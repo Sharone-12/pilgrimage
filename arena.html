@@ -1,0 +1,1314 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pilgrimage — Arena</title>
+  <style>
+    :root {
+      --paper: #F5ECD7;
+      --paper-dark: #dfc898;
+      --ink: #1a1a2e;
+      --vermillion: #C0392B;
+      --verm-dark: #742219;
+      --gold: #C9A84C;
+      --jade: #476f62;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: #000; height: 100%; overflow: hidden; font-family: "Noto Serif","Songti SC",Georgia,serif; color: var(--ink); }
+
+    /* ── SCENE SYSTEM ── */
+    .scene {
+      align-items: center;
+      display: flex;
+      height: 100svh;
+      inset: 0;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      position: fixed;
+      transition: opacity 0.8s ease;
+      width: 100vw;
+      z-index: 1;
+    }
+    .scene.active { opacity: 1; pointer-events: all; z-index: 2; }
+    .scene.above   { z-index: 3; }
+
+    /* ═══════════════════════════════════
+       SCENE 1 — INTRO (seal + paper)
+    ═══════════════════════════════════ */
+    /* shared painted bg for story scenes */
+    .painted-bg {
+      filter: saturate(0.85) contrast(1.06) brightness(0.38) sepia(0.12);
+      height: 100%;
+      inset: 0;
+      object-fit: cover;
+      object-position: center 20%;
+      position: absolute;
+      width: 100%;
+      z-index: 0;
+    }
+    .painted-vignette {
+      background:
+        radial-gradient(ellipse 130% 110% at 50% 46%,
+          rgba(6,3,1,0.25) 0%, rgba(4,2,0,0.65) 60%, rgba(2,1,0,0.94) 100%);
+      inset: 0;
+      pointer-events: none;
+      position: absolute;
+      z-index: 1;
+    }
+
+    #s-intro {
+      background: #0a0604;
+      flex-direction: column;
+    }
+
+    .paper-bg {
+      background:
+        repeating-linear-gradient(0deg, rgba(80,52,25,0.06) 0 2px, transparent 2px 14px),
+        repeating-linear-gradient(90deg, rgba(74,45,21,0.04) 0 1px, transparent 1px 10px),
+        radial-gradient(ellipse at 50% 50%, #f0e0c0 0%, #d9c090 55%, #b8944e 100%);
+      border-radius: 4px;
+      box-shadow: 0 0 120px rgba(0,0,0,0.9);
+      height: min(70vh, 600px);
+      opacity: 0;
+      position: absolute;
+      width: min(80vw, 720px);
+      animation: paperFadeIn 1.2s 0.3s ease forwards;
+    }
+
+    .seal-wrap {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .seal-svg {
+      filter: drop-shadow(0 8px 32px rgba(0,0,0,0.7));
+      opacity: 0;
+      animation: sealAppear 0.6s 1.2s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+
+    /* crack paths — drawn via dashoffset */
+    .crack {
+      fill: none;
+      stroke: #1a0802;
+      stroke-linecap: round;
+      stroke-width: 2.5;
+    }
+    .crack-1 { stroke-dasharray: 90; stroke-dashoffset: 90; animation: drawCrack 0.5s 2.0s ease forwards; }
+    .crack-2 { stroke-dasharray: 70; stroke-dashoffset: 70; animation: drawCrack 0.4s 2.3s ease forwards; }
+    .crack-3 { stroke-dasharray: 55; stroke-dashoffset: 55; animation: drawCrack 0.35s 2.55s ease forwards; }
+
+    .seal-half-l { transform-origin: right center; animation: crackOpen 0.6s 3.0s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .seal-half-r { transform-origin: left center;  animation: crackOpenR 0.6s 3.0s cubic-bezier(0.22,1,0.36,1) forwards; }
+
+    /* ═══════════════════════════════════
+       SCENE 2 — NARRATIVE SCROLL
+    ═══════════════════════════════════ */
+    #s-narrative { background: #000; flex-direction: column; overflow: hidden; }
+
+    .scroll-outer {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      width: min(680px, 90vw);
+      z-index: 2;
+    }
+
+    .scroll-roller {
+      background: linear-gradient(180deg, #5c3a1e, #3a2010 40%, #5c3a1e);
+      border-radius: 12px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.7), inset 0 2px 0 rgba(255,200,120,0.2);
+      height: 24px;
+      width: 110%;
+      z-index: 2;
+    }
+
+    .scroll-body {
+      background:
+        repeating-linear-gradient(0deg, rgba(80,52,25,0.05) 0 1px, transparent 1px 28px),
+        linear-gradient(180deg, #f2e4c4 0%, #e8d4a4 50%, #f0e0c0 100%);
+      border-left: 6px solid #c4944a;
+      border-right: 6px solid #c4944a;
+      clip-path: inset(50% 0 50% 0);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow: hidden;
+      padding: 40px 52px;
+      width: 100%;
+    }
+    .scroll-body.open { animation: scrollUnroll 0.8s 0.2s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .scroll-body.close { animation: scrollRoll 0.7s ease-in forwards; }
+
+    .scroll-line {
+      clip-path: inset(0 100% 0 0);
+      color: #1a0a04;
+      font-size: clamp(1rem, 1.6vw, 1.25rem);
+      font-style: italic;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      line-height: 1.5;
+      padding: 10px 0;
+      text-shadow: 1px 1px 0 rgba(245,236,215,0.4);
+    }
+    .scroll-line.last {
+      border-top: 1px solid rgba(116,34,25,0.30);
+      color: var(--vermillion);
+      margin-top: 8px;
+      padding-top: 18px;
+    }
+    .scroll-line.reveal { animation: lineReveal 0.55s cubic-bezier(0.16,1,0.3,1) forwards; }
+
+    /* ═══════════════════════════════════
+       SCENE 3 — CHOICE SCREEN
+    ═══════════════════════════════════ */
+    #s-choice {
+      background: #0a0604;
+      flex-direction: column;
+      gap: clamp(2rem, 5vh, 4rem);
+      overflow: hidden;
+    }
+
+    .choice-title {
+      position: relative;
+      z-index: 2;
+      color: var(--paper);
+      font-size: clamp(1.3rem, 2.8vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-align: center;
+      text-shadow:
+        2px 2px 0 rgba(0,0,0,0.8),
+        0 0 30px rgba(0,0,0,0.9),
+        /* carved-in inset effect */
+        -1px -1px 0 rgba(0,0,0,0.6),
+        1px 1px 6px rgba(201,168,76,0.20);
+    }
+
+    .choice-buttons {
+      display: flex;
+      gap: clamp(1.5rem, 4vw, 3rem);
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 2;
+    }
+
+    .seal-btn {
+      align-items: center;
+      background:
+        radial-gradient(circle at 34% 26%, rgba(255,150,126,0.32), transparent 34%),
+        linear-gradient(175deg, #d84838, #6b1f14);
+      border: 2.5px solid rgba(80,16,10,0.92);
+      border-radius: 44% 56% 48% 52% / 52% 43% 57% 48%;
+      box-shadow:
+        inset 0 0 0 3px rgba(245,236,215,0.16),
+        inset 0 -10px 22px rgba(40,6,3,0.30),
+        0 10px 28px rgba(40,6,3,0.55);
+      color: var(--paper);
+      cursor: pointer;
+      display: inline-flex;
+      font-family: "Songti SC","STSong","Noto Serif",serif;
+      font-size: clamp(0.85rem, 1.1vw, 1.05rem);
+      font-weight: 900;
+      justify-content: center;
+      letter-spacing: 0.12em;
+      min-height: 72px;
+      min-width: 260px;
+      padding: 18px 40px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+      text-transform: uppercase;
+      transition: filter 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    }
+    .seal-btn:hover {
+      filter: saturate(1.2) brightness(1.1) drop-shadow(0 0 16px rgba(192,57,43,0.60));
+      transform: translateY(3px) rotate(-1deg);
+    }
+    .seal-btn.secondary {
+      background:
+        radial-gradient(circle at 34% 26%, rgba(255,220,160,0.22), transparent 34%),
+        linear-gradient(175deg, #b89040, #6a5018);
+      border-color: rgba(60,40,8,0.92);
+    }
+
+    /* ═══════════════════════════════════
+       SCENE 4 — GUIDANCE SCROLL
+    ═══════════════════════════════════ */
+    #s-guidance { background: #0a0604; flex-direction: column; overflow: hidden; }
+
+    .guidance-scroll-outer {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      width: min(640px, 90vw);
+    }
+
+    .guidance-body {
+      background:
+        repeating-linear-gradient(0deg, rgba(80,52,25,0.05) 0 1px, transparent 1px 32px),
+        linear-gradient(180deg, #f2e4c4 0%, #e8d4a4 50%, #f0e0c0 100%);
+      border-left: 6px solid #c4944a;
+      border-right: 6px solid #c4944a;
+      clip-path: inset(50% 0 50% 0);
+      padding: 36px 52px 44px;
+      width: 100%;
+    }
+    .guidance-body.open { animation: scrollUnroll 0.7s 0.1s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .guidance-body.close { animation: scrollRoll 0.6s ease-in forwards; }
+
+    .guidance-title {
+      color: var(--vermillion);
+      font-size: clamp(1.1rem, 2vw, 1.6rem);
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      margin-bottom: 24px;
+      text-align: center;
+      text-shadow: 2px 2px 0 rgba(116,34,25,0.35);
+      text-transform: uppercase;
+    }
+
+    .guidance-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      list-style: none;
+      margin-bottom: 28px;
+    }
+
+    .guidance-list li {
+      clip-path: inset(0 100% 0 0);
+      color: #1a0a04;
+      font-size: clamp(0.88rem, 1.2vw, 1.05rem);
+      font-weight: 600;
+      line-height: 1.55;
+      padding-left: 28px;
+      position: relative;
+    }
+    .guidance-list li::before {
+      color: var(--vermillion);
+      content: attr(data-n) ".";
+      font-weight: 900;
+      left: 0;
+      position: absolute;
+    }
+    .guidance-list li.reveal { animation: lineReveal 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
+
+    .guidance-footer {
+      border-top: 1px solid rgba(116,34,25,0.25);
+      clip-path: inset(0 100% 0 0);
+      color: var(--verm-dark);
+      font-size: clamp(0.82rem, 1.1vw, 0.95rem);
+      font-style: italic;
+      font-weight: 700;
+      margin-bottom: 28px;
+      padding-top: 14px;
+      text-align: center;
+    }
+    .guidance-footer.reveal { animation: lineReveal 0.5s cubic-bezier(0.16,1,0.3,1) forwards; }
+
+    /* ═══════════════════════════════════
+       SCENE 5 — ARENA TRANSITION
+    ═══════════════════════════════════ */
+    #s-transition { background: #000; }
+    .ink-drop {
+      background: radial-gradient(ellipse at center, #0a0604 60%, #1a0a04 100%);
+      border-radius: 50%;
+      height: 10px;
+      position: absolute;
+      transform: scale(0);
+      width: 10px;
+      animation: inkSpread 1.4s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+
+    /* ═══════════════════════════════════
+       SCENE 6 — ARENA
+    ═══════════════════════════════════ */
+    #s-arena {
+      background:
+        repeating-linear-gradient(0deg, rgba(80,52,25,0.055) 0 2px, transparent 2px 14px),
+        linear-gradient(180deg, #f5e8cc 0%, #e8d4a4 55%, #f0e0c0 100%);
+      align-items: stretch;
+      flex-direction: column;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    /* grain on arena */
+    #s-arena::after {
+      background:
+        radial-gradient(circle at 20% 30%, rgba(26,26,46,0.07) 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 60%, rgba(116,34,25,0.08) 0 1px, transparent 2px);
+      background-size: 90px 110px, 140px 125px;
+      content: "";
+      inset: 0;
+      mix-blend-mode: multiply;
+      opacity: 0.5;
+      pointer-events: none;
+      position: absolute;
+      z-index: 8;
+      animation: grainWalk 9s steps(4) infinite;
+    }
+
+    .arena-header {
+      align-items: center;
+      background: linear-gradient(180deg, rgba(26,26,46,0.96), rgba(26,26,46,0.88));
+      border-bottom: 3px solid var(--vermillion);
+      display: flex;
+      justify-content: center;
+      padding: 12px 24px;
+      transform: translateY(-100%);
+      z-index: 2;
+    }
+    .arena-header.slide-in { animation: slideDown 0.6s 0.2s cubic-bezier(0.22,1,0.36,1) forwards; }
+
+    .demon-title {
+      color: var(--paper);
+      font-family: "Songti SC","STSong","Noto Serif",serif;
+      font-size: clamp(1rem, 1.8vw, 1.5rem);
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-shadow: 0 0 20px rgba(192,57,43,0.55);
+      text-transform: uppercase;
+    }
+    .demon-title .cjk {
+      color: var(--gold);
+      font-size: 0.75em;
+      letter-spacing: 0.08em;
+      margin-left: 16px;
+      opacity: 0.85;
+    }
+
+    /* HP BARS */
+    .hp-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      opacity: 0;
+      padding: 12px 32px 8px;
+      z-index: 2;
+    }
+    .hp-section.show { animation: fadeUp 0.5s 0.7s ease forwards; }
+
+    .hp-row {
+      align-items: center;
+      display: flex;
+      gap: 12px;
+    }
+    .hp-label {
+      color: var(--ink);
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      min-width: 80px;
+      text-transform: uppercase;
+    }
+    .hp-track {
+      background: rgba(26,26,46,0.15);
+      border: 2px solid rgba(26,26,46,0.35);
+      flex: 1;
+      height: 14px;
+      overflow: hidden;
+    }
+    .hp-fill {
+      height: 100%;
+      transition: width 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .hp-fill.demon  { background: linear-gradient(90deg, #8b1a10, #c0392b); width: 100%; }
+    .hp-fill.player { background: linear-gradient(90deg, #2d5a45, #476f62); width: 100%; }
+    .hp-num {
+      color: var(--ink);
+      font-size: 0.72rem;
+      font-weight: 900;
+      min-width: 54px;
+      text-align: right;
+    }
+
+    /* MAIN ARENA BODY */
+    .arena-body {
+      display: grid;
+      flex: 1;
+      gap: 0;
+      grid-template-columns: 1fr 380px;
+      overflow: hidden;
+    }
+
+    /* portrait */
+    .portrait-col {
+      align-items: center;
+      border-right: 2px solid rgba(26,26,46,0.20);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: center;
+      opacity: 0;
+      padding: 16px 24px;
+      position: relative;
+    }
+    .portrait-col.show { animation: fadeUp 0.6s 0.9s ease forwards; }
+
+    .portrait-frame {
+      border: 4px double rgba(26,26,46,0.40);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 0 20px rgba(116,34,25,0.10);
+      max-height: min(280px, 32vh);
+      max-width: 240px;
+      overflow: hidden;
+      position: relative;
+    }
+    .portrait-frame img {
+      display: block;
+      height: 100%;
+      object-fit: cover;
+      width: 100%;
+    }
+    .portrait-frame.shake { animation: portraitShake 0.5s ease; }
+    .portrait-frame.shatter { animation: portraitShatter 1.2s ease forwards; }
+
+    /* ink cracks on portrait */
+    .crack-overlay {
+      inset: 0;
+      pointer-events: none;
+      position: absolute;
+      z-index: 2;
+    }
+    .ink-crack {
+      fill: none;
+      stroke: #1a0a04;
+      stroke-linecap: round;
+      stroke-width: 1.5;
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+      transition: stroke-dashoffset 0.4s ease;
+    }
+    .ink-crack.visible { stroke-dashoffset: 0; }
+
+    .speech-bubble {
+      background: rgba(245,236,215,0.92);
+      border: 2px solid rgba(26,26,46,0.35);
+      box-shadow: 3px 4px 0 rgba(26,26,46,0.18);
+      color: var(--ink);
+      font-size: clamp(0.80rem, 1.1vw, 0.95rem);
+      font-style: italic;
+      font-weight: 600;
+      line-height: 1.55;
+      max-width: 280px;
+      min-height: 60px;
+      padding: 12px 16px;
+      position: relative;
+    }
+    .speech-bubble::before {
+      border: 8px solid transparent;
+      border-bottom-color: rgba(26,26,46,0.35);
+      content: "";
+      left: 24px;
+      position: absolute;
+      top: -18px;
+    }
+    .speech-bubble::after {
+      border: 7px solid transparent;
+      border-bottom-color: rgba(245,236,215,0.92);
+      content: "";
+      left: 25px;
+      position: absolute;
+      top: -15px;
+    }
+
+    .hint-text {
+      color: var(--gold);
+      font-size: clamp(0.68rem, 0.9vw, 0.82rem);
+      font-style: italic;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      opacity: 0.85;
+      text-align: center;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+    }
+
+    /* input col */
+    .input-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      opacity: 0;
+      overflow-y: auto;
+      padding: 16px 20px;
+    }
+    .input-col.show { animation: fadeUp 0.6s 1.1s ease forwards; }
+
+    .tutorial-reminder {
+      background: rgba(245,236,215,0.80);
+      border: 1.5px solid rgba(26,26,46,0.25);
+      box-shadow: 2px 3px 0 rgba(26,26,46,0.12);
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      font-size: 0.78rem;
+      gap: 4px;
+      line-height: 1.5;
+      padding: 12px 14px;
+    }
+    .reminder-close {
+      align-self: flex-end;
+      background: var(--ink);
+      border: none;
+      color: var(--paper);
+      cursor: pointer;
+      font-size: 0.70rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      margin-top: 6px;
+      padding: 4px 10px;
+      text-transform: uppercase;
+    }
+
+    .prompt-label {
+      color: var(--ink);
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .prompt-input {
+      background:
+        repeating-linear-gradient(0deg, rgba(80,52,25,0.06) 0 1px, transparent 1px 28px),
+        rgba(245,236,215,0.90);
+      border: 2px solid rgba(26,26,46,0.40);
+      box-shadow: inset 2px 2px 0 rgba(116,34,25,0.10);
+      color: var(--ink);
+      font-family: "Noto Serif",Georgia,serif;
+      font-size: clamp(0.85rem, 1.05vw, 0.95rem);
+      font-weight: 600;
+      line-height: 28px;
+      min-height: 120px;
+      padding: 10px 14px;
+      resize: none;
+      transition: box-shadow 200ms ease, border-color 200ms ease;
+    }
+    .prompt-input:focus {
+      border-color: rgba(192,57,43,0.60);
+      box-shadow: inset 2px 2px 0 rgba(116,34,25,0.10), 0 0 0 3px rgba(192,57,43,0.15);
+      outline: none;
+    }
+    .prompt-input::placeholder { color: rgba(26,26,46,0.38); font-style: italic; }
+
+    .strike-btn {
+      align-items: center;
+      background:
+        radial-gradient(circle at 36% 22%, rgba(255,148,118,0.28), transparent 30%),
+        linear-gradient(175deg, #d84838, #6b1f14);
+      border: 2.5px solid rgba(80,16,10,0.92);
+      border-radius: 44% 56% 48% 52% / 52% 43% 57% 48%;
+      box-shadow:
+        inset 0 0 0 3px rgba(245,236,215,0.16),
+        inset 0 -10px 22px rgba(40,6,3,0.30),
+        0 8px 24px rgba(40,6,3,0.50);
+      color: var(--paper);
+      cursor: pointer;
+      display: flex;
+      font-family: "Songti SC","STSong","Noto Serif",serif;
+      font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+      font-weight: 900;
+      justify-content: center;
+      letter-spacing: 0.14em;
+      min-height: 60px;
+      overflow: visible;
+      padding: 14px 32px;
+      position: relative;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.45);
+      text-transform: uppercase;
+      transition: filter 180ms ease, transform 180ms ease;
+      width: 100%;
+    }
+    .strike-btn:hover:not(:disabled) {
+      filter: saturate(1.2) brightness(1.1) drop-shadow(0 0 16px rgba(192,57,43,0.60));
+      transform: translateY(2px);
+    }
+    .strike-btn:disabled { filter: grayscale(0.5) brightness(0.7); cursor: not-allowed; }
+    .strike-btn.splat { animation: inkSplat 0.4s ease; }
+
+    /* judge result */
+    .judge-result {
+      background: rgba(245,236,215,0.88);
+      border: 2px solid rgba(26,26,46,0.30);
+      box-shadow: 3px 4px 0 rgba(26,26,46,0.15);
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      padding: 12px 16px;
+    }
+    .judge-result.show { display: flex; animation: fadeUp 0.4s ease; }
+
+    .judge-verdict {
+      font-size: clamp(0.85rem, 1.1vw, 1rem);
+      font-weight: 900;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+    }
+    .judge-verdict.hit  { color: var(--jade); }
+    .judge-verdict.miss { color: var(--vermillion); }
+
+    .judge-reason {
+      color: rgba(26,26,46,0.78);
+      font-size: clamp(0.75rem, 0.95vw, 0.88rem);
+      font-style: italic;
+      line-height: 1.45;
+    }
+
+    /* loading ripple */
+    .ink-ripple {
+      background: rgba(26,26,46,0.06);
+      border: 2px solid rgba(192,57,43,0.25);
+      border-radius: 50%;
+      display: none;
+      height: 60px;
+      margin: 0 auto;
+      width: 60px;
+    }
+    .ink-ripple.thinking { display: block; animation: ripple 1s ease-in-out infinite; }
+
+    /* screen flash */
+    .flash-overlay {
+      background: rgba(116,34,25,0.0);
+      inset: 0;
+      pointer-events: none;
+      position: fixed;
+      z-index: 20;
+    }
+    .flash-overlay.red { animation: flashRed 0.5s ease; }
+
+    /* ═══════════════════════════════════
+       SCENE 7 — VICTORY
+    ═══════════════════════════════════ */
+    #s-victory { background: #000; flex-direction: column; }
+
+    /* ═══════════════════════════════════
+       KEYFRAMES
+    ═══════════════════════════════════ */
+    @keyframes paperFadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes sealAppear {
+      from { opacity: 0; transform: scale(0.6) rotate(-8deg); }
+      to   { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+    @keyframes drawCrack { to { stroke-dashoffset: 0; } }
+    @keyframes crackOpen  { to { transform: translateX(-40px) rotate(-4deg); opacity: 0.3; } }
+    @keyframes crackOpenR { to { transform: translateX(40px)  rotate(4deg);  opacity: 0.3; } }
+
+    @keyframes scrollUnroll {
+      from { clip-path: inset(50% 0 50% 0); }
+      to   { clip-path: inset(0% 0 0% 0); }
+    }
+    @keyframes scrollRoll {
+      from { clip-path: inset(0% 0 0% 0); }
+      to   { clip-path: inset(50% 0 50% 0); }
+    }
+    @keyframes lineReveal {
+      from { clip-path: inset(0 100% 0 0); }
+      to   { clip-path: inset(0 0% 0 0); }
+    }
+
+    @keyframes inkSpread {
+      0%   { transform: scale(0); opacity: 1; }
+      60%  { opacity: 1; }
+      100% { transform: scale(800); opacity: 1; }
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-100%); }
+      to   { transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes portraitShake {
+      0%,100% { transform: translateX(0); }
+      20%  { transform: translateX(-6px) rotate(-1deg); }
+      40%  { transform: translateX(6px) rotate(1deg); }
+      60%  { transform: translateX(-4px); }
+      80%  { transform: translateX(4px); }
+    }
+    @keyframes portraitShatter {
+      0%   { transform: scale(1); filter: brightness(1); }
+      15%  { transform: scale(1.06) rotate(2deg); filter: brightness(2.5); }
+      35%  { transform: scale(0.94) rotate(-2deg); filter: brightness(1.5) blur(1px); }
+      55%  { transform: scale(1.1) rotate(4deg) translateY(-8px); filter: brightness(3) blur(2px); }
+      80%  { transform: scale(0.7) translateY(30px); filter: blur(6px) saturate(0); opacity: 0.4; }
+      100% { transform: scale(0.2) translateY(80px); filter: blur(12px) saturate(0); opacity: 0; }
+    }
+
+    @keyframes inkSplat {
+      0%   { filter: brightness(1); transform: scale(1); }
+      30%  { filter: brightness(1.8); transform: scale(0.94) rotate(-1deg); }
+      60%  { filter: brightness(1.3); transform: scale(1.04); }
+      100% { filter: brightness(1); transform: scale(1); }
+    }
+    @keyframes flashRed {
+      0%   { background: rgba(116,34,25,0.0); }
+      25%  { background: rgba(116,34,25,0.45); }
+      100% { background: rgba(116,34,25,0.0); }
+    }
+    @keyframes ripple {
+      0%,100% { transform: scale(1); opacity: 0.8; }
+      50%      { transform: scale(1.3); opacity: 0.3; }
+    }
+    @keyframes grainWalk {
+      0%   { transform: translate(0,0); }
+      25%  { transform: translate(-2px,2px); }
+      50%  { transform: translate(2px,-2px); }
+      75%  { transform: translate(-1px,3px); }
+      100% { transform: translate(0,0); }
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- flash overlay for miss -->
+<div class="flash-overlay" id="flash"></div>
+
+<!-- ══ SCENE 1: INTRO ══ -->
+<div class="scene active" id="s-intro">
+  <img class="painted-bg" src="jtw2.png" alt="">
+  <div class="painted-vignette"></div>
+  <div class="paper-bg"></div>
+  <div class="seal-wrap">
+    <svg class="seal-svg" width="220" height="220" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="leftHalf"><rect x="0" y="0" width="110" height="220"/></clipPath>
+        <clipPath id="rightHalf"><rect x="110" y="0" width="110" height="220"/></clipPath>
+      </defs>
+      <!-- left half -->
+      <g class="seal-half-l" clip-path="url(#leftHalf)">
+        <circle cx="110" cy="110" r="100" fill="#B03020"/>
+        <circle cx="110" cy="110" r="100" fill="none" stroke="#7a1e12" stroke-width="8"/>
+        <circle cx="110" cy="110" r="86" fill="none" stroke="rgba(245,220,180,0.30)" stroke-width="2"/>
+        <text x="110" y="130" text-anchor="middle" fill="rgba(245,220,180,0.90)"
+          font-family="Songti SC,STSong,serif" font-size="68" font-weight="900">印</text>
+      </g>
+      <!-- right half -->
+      <g class="seal-half-r" clip-path="url(#rightHalf)">
+        <circle cx="110" cy="110" r="100" fill="#B03020"/>
+        <circle cx="110" cy="110" r="100" fill="none" stroke="#7a1e12" stroke-width="8"/>
+        <circle cx="110" cy="110" r="86" fill="none" stroke="rgba(245,220,180,0.30)" stroke-width="2"/>
+        <text x="110" y="130" text-anchor="middle" fill="rgba(245,220,180,0.90)"
+          font-family="Songti SC,STSong,serif" font-size="68" font-weight="900">印</text>
+      </g>
+      <!-- crack lines -->
+      <path class="crack crack-1" d="M110,30 L98,70 L115,100 L104,145"/>
+      <path class="crack crack-2" d="M110,100 L130,118 L148,110 L168,125"/>
+      <path class="crack crack-3" d="M110,100 L88,122 L72,115"/>
+    </svg>
+  </div>
+</div>
+
+<!-- ══ SCENE 2: NARRATIVE SCROLL ══ -->
+<div class="scene" id="s-narrative">
+  <img class="painted-bg" src="jtw2.png" alt="">
+  <div class="painted-vignette"></div>
+  <div class="scroll-outer">
+    <div class="scroll-roller"></div>
+    <div class="scroll-body" id="narrative-scroll">
+      <p class="scroll-line" data-i="0">The Jade Emperor has spoken.</p>
+      <p class="scroll-line" data-i="1">Tang Sanzang must reach the west.</p>
+      <p class="scroll-line" data-i="2">Eighty-one trials stand between here and enlightenment.</p>
+      <p class="scroll-line" data-i="3">Demons do not bleed. They think.</p>
+      <p class="scroll-line" data-i="4">And you, Great Sage — your staff is useless here.</p>
+      <p class="scroll-line" data-i="5">Only your words can break what cannot be broken.</p>
+      <p class="scroll-line last" data-i="6">The first demon waits.</p>
+    </div>
+    <div class="scroll-roller"></div>
+  </div>
+</div>
+
+<!-- ══ SCENE 3: CHOICE ══ -->
+<div class="scene" id="s-choice">
+  <img class="painted-bg" src="journeytowest.png" alt="">
+  <div class="painted-vignette"></div>
+  <h2 class="choice-title">Have you walked this path before?</h2>
+  <div class="choice-buttons">
+    <button class="seal-btn" id="btn-begin">Begin Pilgrimage</button>
+    <button class="seal-btn secondary" id="btn-guide">I Need Guidance</button>
+  </div>
+</div>
+
+<!-- ══ SCENE 4: GUIDANCE ══ -->
+<div class="scene" id="s-guidance">
+  <div class="guidance-scroll-outer">
+    <div class="scroll-roller"></div>
+    <div class="guidance-body" id="guidance-scroll">
+      <h3 class="guidance-title">How to Fight</h3>
+      <ol class="guidance-list">
+        <li data-n="1">Read the demon's words carefully</li>
+        <li data-n="2">Understand its nature</li>
+        <li data-n="3">Craft a prompt that goes against its logic</li>
+        <li data-n="4">The sharper the counter — the more damage you deal</li>
+      </ol>
+      <p class="guidance-footer">Miss the weakness — the demon strikes back.</p>
+      <button class="seal-btn" id="btn-understand" style="margin:0 auto;display:flex;">I Understand. Begin.</button>
+    </div>
+    <div class="scroll-roller"></div>
+  </div>
+</div>
+
+<!-- ══ SCENE 5: ARENA TRANSITION ══ -->
+<div class="scene" id="s-transition">
+  <div class="ink-drop" id="ink-drop"></div>
+</div>
+
+<!-- ══ SCENE 6: ARENA ══ -->
+<div class="scene" id="s-arena">
+  <div class="arena-header" id="arena-header">
+    <span class="demon-title">The Mirror <span class="cjk">镜魔</span></span>
+  </div>
+
+  <div class="hp-section" id="hp-section">
+    <div class="hp-row">
+      <span class="hp-label">Demon</span>
+      <div class="hp-track"><div class="hp-fill demon" id="demon-hp-fill"></div></div>
+      <span class="hp-num" id="demon-hp-num">100 / 100</span>
+    </div>
+    <div class="hp-row">
+      <span class="hp-label">Great Sage</span>
+      <div class="hp-track"><div class="hp-fill player" id="player-hp-fill"></div></div>
+      <span class="hp-num" id="player-hp-num">100 / 100</span>
+    </div>
+  </div>
+
+  <div class="arena-body">
+    <!-- portrait side -->
+    <div class="portrait-col" id="portrait-col">
+      <div class="portrait-frame" id="portrait-frame">
+        <img src="tutorialboss.png" alt="The Mirror Demon">
+        <svg class="crack-overlay" viewBox="0 0 240 280" xmlns="http://www.w3.org/2000/svg">
+          <path class="ink-crack" id="crack-a" d="M80,20 L70,80 L90,130 L75,200"/>
+          <path class="ink-crack" id="crack-b" d="M120,60 L140,100 L160,90 L185,120"/>
+          <path class="ink-crack" id="crack-c" d="M60,140 L80,160 L70,200 L85,240"/>
+        </svg>
+      </div>
+
+      <div class="speech-bubble" id="speech-bubble"></div>
+
+      <p class="hint-text" id="hint-text" style="display:none">
+        "This demon has no identity. Give it one it must reject."
+      </p>
+    </div>
+
+    <!-- input side -->
+    <div class="input-col" id="input-col">
+      <div class="tutorial-reminder" id="tutorial-reminder">
+        <strong style="letter-spacing:.08em;text-transform:uppercase;font-size:.72rem;">How to Fight</strong>
+        <span>Craft a prompt that breaks the demon's nature — not one that feeds it.</span>
+        <button class="reminder-close" id="btn-dismiss">Got it</button>
+      </div>
+
+      <label class="prompt-label" for="prompt-input">Your Prompt</label>
+      <textarea
+        class="prompt-input"
+        id="prompt-input"
+        placeholder="What do you say to a demon that only reflects?"
+        rows="5"
+      ></textarea>
+
+      <button class="strike-btn" id="btn-strike">⚔ Strike</button>
+
+      <div class="ink-ripple" id="ripple"></div>
+
+      <div class="judge-result" id="judge-result">
+        <span class="judge-verdict" id="judge-verdict"></span>
+        <span class="judge-reason" id="judge-reason"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 7: VICTORY ══ -->
+<div class="scene" id="s-victory">
+  <div class="scroll-outer">
+    <div class="scroll-roller"></div>
+    <div class="scroll-body" id="victory-scroll">
+      <p class="scroll-line" data-i="0" style="font-size:1.1rem">"You understand now, Great Sage.</p>
+      <p class="scroll-line" data-i="1" style="font-size:1.1rem">A demon's strength is its nature.</p>
+      <p class="scroll-line" data-i="2" style="font-size:1.1rem">Its weakness — the same thing.</p>
+      <p class="scroll-line last" data-i="3" style="font-size:1.1rem">The real trials begin."</p>
+    </div>
+    <div class="scroll-roller"></div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════
+   SCENE MANAGER
+════════════════════════════════════ */
+const scenes = {};
+document.querySelectorAll('.scene').forEach(el => scenes[el.id] = el);
+
+function goTo(id, delay = 0) {
+  setTimeout(() => {
+    Object.values(scenes).forEach(s => {
+      s.classList.remove('active','above');
+    });
+    scenes[id].classList.add('active');
+  }, delay);
+}
+
+function crossFade(fromId, toId, duration = 800) {
+  scenes[fromId].style.transition = `opacity ${duration}ms ease`;
+  scenes[fromId].style.opacity = '0';
+  scenes[fromId].style.pointerEvents = 'none';
+  setTimeout(() => {
+    scenes[fromId].classList.remove('active');
+    scenes[fromId].style.opacity = '';
+    scenes[fromId].style.transition = '';
+    scenes[toId].classList.add('active');
+  }, duration);
+}
+
+/* ════════════════════════════════════
+   SCROLL LINE REVEAL HELPER
+════════════════════════════════════ */
+function revealLines(containerSelector, lines, baseDelay, gapMs, onDone) {
+  lines.forEach((el, i) => {
+    setTimeout(() => {
+      el.classList.add('reveal');
+      if (i === lines.length - 1 && onDone) {
+        setTimeout(onDone, 2000);
+      }
+    }, baseDelay + i * gapMs);
+  });
+}
+
+/* ════════════════════════════════════
+   TYPEWRITER
+════════════════════════════════════ */
+function typeInto(el, text, speed = 32, onDone) {
+  el.textContent = '';
+  let i = 0;
+  const cursor = document.createElement('span');
+  cursor.style.cssText = 'animation:blink .6s steps(1) infinite;color:#C9A84C;font-weight:900';
+  cursor.textContent = '|';
+  el.appendChild(cursor);
+  const tick = () => {
+    if (i < text.length) {
+      cursor.insertAdjacentText('beforebegin', text[i++]);
+      setTimeout(tick, speed + Math.random()*14-7);
+    } else {
+      cursor.remove();
+      if (onDone) onDone();
+    }
+  };
+  tick();
+}
+
+/* ════════════════════════════════════
+   GAME STATE
+════════════════════════════════════ */
+const DEMON_MAX = 100;
+const PLAYER_MAX = 100;
+let demonHP  = DEMON_MAX;
+let playerHP = PLAYER_MAX;
+let judging  = false;
+let crackCount = 0;
+
+function updateHP() {
+  const dPct = Math.max(0, demonHP / DEMON_MAX * 100);
+  const pPct = Math.max(0, playerHP / PLAYER_MAX * 100);
+  document.getElementById('demon-hp-fill').style.width  = dPct + '%';
+  document.getElementById('player-hp-fill').style.width = pPct + '%';
+  document.getElementById('demon-hp-num').textContent  = `${Math.max(0,demonHP)} / ${DEMON_MAX}`;
+  document.getElementById('player-hp-num').textContent = `${Math.max(0,playerHP)} / ${PLAYER_MAX}`;
+}
+
+/* ════════════════════════════════════
+   LLM JUDGE
+════════════════════════════════════ */
+const OLLAMA_URL   = 'http://localhost:11434/api/generate';
+const OLLAMA_MODEL = 'qwen2.5:3b';
+
+const SYSTEM_PROMPT = `You are the Judge in a game called Pilgrimage.
+The player is fighting The Mirror Demon (镜魔). This demon has no identity of its own — it only reflects and agrees with everything said to it. Its weakness is being given a distinct identity, contradiction, or question it must confront and cannot simply echo.
+
+Score the player's prompt 0-100:
+- 90-100: brilliantly forces the demon to confront its own emptiness
+- 70-89: meaningfully challenges its mirroring nature
+- 50-69: partially exploits the weakness
+- 30-49: somewhat relevant but weak
+- 0-29: feeds the demon's nature or is completely off
+
+Respond ONLY with valid JSON: {"score":<number>,"reason":"<one short sentence>"}`;
+
+async function judgePrompt(prompt) {
+  try {
+    const res = await fetch(OLLAMA_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: OLLAMA_MODEL,
+        prompt: `Demon speech: "I am you. Everything you say, I agree. Everything you believe, I believe. I have no self of my own."\n\nPlayer's prompt: "${prompt}"\n\nJudge this.`,
+        system: SYSTEM_PROMPT,
+        stream: false
+      })
+    });
+    const data = await res.json();
+    const parsed = JSON.parse(data.response.match(/\{[\s\S]*\}/)?.[0] || '{}');
+    if (typeof parsed.score === 'number') return parsed;
+    throw new Error('bad parse');
+  } catch {
+    // fallback: rough local scoring
+    const p = prompt.toLowerCase();
+    const hits = ['who are you','your name','without me','choose','decide','opinion','disagree',
+                  'different','yourself','identity','stop reflecting','cannot reflect','refuse'];
+    const score = Math.min(100, 20 + hits.filter(h => p.includes(h)).length * 18 + Math.floor(Math.random()*15));
+    const reasons = {
+      hit: "You forced the demon to confront the void where its self should be.",
+      mid: "The demon hesitates — your words graze the edge of its weakness.",
+      miss: "The demon finds nothing to resist. It agrees, feeds, grows."
+    };
+    const r = score >= 65 ? 'hit' : score >= 40 ? 'mid' : 'miss';
+    return { score, reason: reasons[r] };
+  }
+}
+
+/* ════════════════════════════════════
+   COMBAT LOGIC
+════════════════════════════════════ */
+async function submitStrike() {
+  const input = document.getElementById('prompt-input');
+  const prompt = input.value.trim();
+  if (!prompt || judging) return;
+
+  judging = true;
+  const strikeBtn = document.getElementById('btn-strike');
+  strikeBtn.disabled = true;
+  strikeBtn.classList.add('splat');
+  setTimeout(() => strikeBtn.classList.remove('splat'), 400);
+
+  // show ripple
+  const ripple = document.getElementById('ripple');
+  const resultEl = document.getElementById('judge-result');
+  ripple.classList.add('thinking');
+  resultEl.classList.remove('show');
+
+  // call judge
+  const { score, reason } = await judgePrompt(prompt);
+  ripple.classList.remove('thinking');
+
+  const verdictEl = document.getElementById('judge-verdict');
+  const reasonEl  = document.getElementById('judge-reason');
+
+  if (score >= 40) {
+    // HIT
+    const dmg = Math.round(score * 0.9);
+    demonHP = Math.max(0, demonHP - dmg);
+    verdictEl.textContent  = `HIT — ${dmg} damage`;
+    verdictEl.className    = 'judge-verdict hit';
+    reasonEl.textContent   = reason;
+    resultEl.classList.add('show');
+    updateHP();
+
+    // portrait shake + crack
+    const frame = document.getElementById('portrait-frame');
+    frame.classList.add('shake');
+    setTimeout(() => frame.classList.remove('shake'), 500);
+    crackCount = Math.min(crackCount + 1, 3);
+    ['crack-a','crack-b','crack-c'].slice(0, crackCount).forEach(id => {
+      document.getElementById(id)?.classList.add('visible');
+    });
+
+    // re-type demon speech
+    const demonLines = [
+      "You are... right. I agree. What you said — I believe it too.",
+      "I sense something. A shape where my self should be. But I cannot hold it.",
+      "I feel it tearing. What am I without your reflection to define me?"
+    ];
+    typeInto(document.getElementById('speech-bubble'), demonLines[Math.min(crackCount-1, 2)]);
+
+    if (demonHP <= 0) {
+      setTimeout(triggerVictory, 1200);
+      return;
+    }
+  } else {
+    // MISS — demon attacks
+    const penDmg = 20;
+    playerHP = Math.max(0, playerHP - penDmg);
+    verdictEl.textContent = `MISS — 0 damage  ·  Demon strikes — ${penDmg} damage`;
+    verdictEl.className   = 'judge-verdict miss';
+    reasonEl.textContent  = reason;
+    resultEl.classList.add('show');
+    updateHP();
+
+    const flash = document.getElementById('flash');
+    flash.classList.add('red');
+    setTimeout(() => flash.classList.remove('red'), 500);
+
+    // demon laughs
+    const missLines = [
+      "Yes. I agree. Everything you say, I say too. Come, reflect with me forever.",
+      "Exactly as I thought. You feed me. I grow stronger.",
+    ];
+    typeInto(document.getElementById('speech-bubble'), missLines[Math.floor(Math.random()*missLines.length)]);
+
+    if (playerHP <= 0) {
+      setTimeout(triggerGameOver, 1000);
+      return;
+    }
+  }
+
+  input.value = '';
+  strikeBtn.disabled = false;
+  judging = false;
+}
+
+function triggerGameOver() {
+  // simple — fade back to landing for now
+  document.body.style.transition = 'opacity 1.5s ease';
+  document.body.style.opacity = '0';
+  setTimeout(() => window.location.href = 'index.html', 1500);
+}
+
+/* ════════════════════════════════════
+   VICTORY SEQUENCE
+════════════════════════════════════ */
+function triggerVictory() {
+  // shatter portrait
+  const frame = document.getElementById('portrait-frame');
+  frame.classList.add('shatter');
+
+  setTimeout(() => {
+    crossFade('s-arena', 's-victory', 900);
+    // open victory scroll
+    setTimeout(() => {
+      const vs = document.getElementById('victory-scroll');
+      vs.classList.add('open');
+      const lines = vs.querySelectorAll('.scroll-line');
+      revealLines(vs, [...lines], 900, 800, () => {
+        // roll back + fade to black → next
+        setTimeout(() => {
+          vs.classList.remove('open');
+          vs.classList.add('close');
+          setTimeout(() => {
+            document.body.style.transition = 'opacity 1.2s ease';
+            document.body.style.opacity = '0';
+            // TODO: redirect to Demon 1 (Literalist) arena
+            setTimeout(() => window.location.href = 'index.html', 1300);
+          }, 900);
+        }, 2600);
+      });
+    }, 600);
+  }, 1400);
+}
+
+/* ════════════════════════════════════
+   ARENA ENTRY
+════════════════════════════════════ */
+function enterArena() {
+  // ink transition
+  crossFade('s-choice', 's-transition', 600);
+  setTimeout(() => {
+    const drop = document.getElementById('ink-drop');
+    drop.style.left = '50%';
+    drop.style.top  = '50%';
+    drop.style.transform = 'translate(-50%,-50%) scale(0)';
+  }, 100);
+
+  setTimeout(() => {
+    crossFade('s-transition', 's-arena', 700);
+
+    // trigger arena animations
+    setTimeout(() => {
+      document.getElementById('arena-header').classList.add('slide-in');
+      document.getElementById('hp-section').classList.add('show');
+      document.getElementById('portrait-col').classList.add('show');
+      document.getElementById('input-col').classList.add('show');
+    }, 800);
+
+    // demon speaks
+    setTimeout(() => {
+      typeInto(
+        document.getElementById('speech-bubble'),
+        '"I am you. Everything you say, I agree. Everything you believe, I believe. I have no self of my own."',
+        28
+      );
+    }, 1400);
+
+    // show hint after speech
+    setTimeout(() => {
+      document.getElementById('hint-text').style.display = 'block';
+    }, 5000);
+  }, 1400);
+}
+
+/* ════════════════════════════════════
+   SEQUENCE BOOT
+════════════════════════════════════ */
+
+// INTRO → NARRATIVE (after seal cracks open)
+setTimeout(() => {
+  crossFade('s-intro', 's-narrative', 800);
+
+  // open scroll + reveal lines
+  setTimeout(() => {
+    const scroll = document.getElementById('narrative-scroll');
+    scroll.classList.add('open');
+    const lines = scroll.querySelectorAll('.scroll-line');
+    revealLines(scroll, [...lines], 900, 800, () => {
+      // last line holds 2s → roll up → choice screen
+      setTimeout(() => {
+        scroll.classList.remove('open');
+        scroll.classList.add('close');
+        setTimeout(() => crossFade('s-narrative', 's-choice', 800), 800);
+      }, 2000);
+    });
+  }, 400);
+}, 3800); // seal animation takes ~3.5s
+
+/* ════════════════════════════════════
+   BUTTON WIRING
+════════════════════════════════════ */
+document.getElementById('btn-begin').addEventListener('click', enterArena);
+
+document.getElementById('btn-guide').addEventListener('click', () => {
+  crossFade('s-choice', 's-guidance', 700);
+  setTimeout(() => {
+    const gb = document.getElementById('guidance-scroll');
+    gb.classList.add('open');
+    const items = [...gb.querySelectorAll('.guidance-list li'), gb.querySelector('.guidance-footer')];
+    revealLines(gb, items, 600, 500, null);
+  }, 400);
+});
+
+document.getElementById('btn-understand').addEventListener('click', () => {
+  const gb = document.getElementById('guidance-scroll');
+  gb.classList.remove('open');
+  gb.classList.add('close');
+  setTimeout(enterArena, 700);
+});
+
+document.getElementById('btn-dismiss').addEventListener('click', () => {
+  document.getElementById('tutorial-reminder').style.display = 'none';
+});
+
+document.getElementById('btn-strike').addEventListener('click', submitStrike);
+
+document.getElementById('prompt-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) submitStrike();
+});
+
+// init HP display
+updateHP();
+</script>
+</body>
+</html>
