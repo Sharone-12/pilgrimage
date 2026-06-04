@@ -257,6 +257,33 @@
       padding: 100px max(28px, calc((100vw - 1060px) / 2)) 120px;
       position: relative;
     }
+    .guide-bg {
+      inset: 0;
+      overflow: hidden;
+      position: absolute;
+      z-index: 0;
+    }
+    .guide-bg img {
+      display: block;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 20%;
+      width: 100%;
+      filter: saturate(0.85) contrast(1.02) brightness(0.55);
+    }
+    .guide-bg-overlay {
+      background:
+        radial-gradient(ellipse 120% 60% at 50% 0%, rgba(6,3,1,0.30) 0%, transparent 70%),
+        linear-gradient(180deg, rgba(6,3,1,0.35) 0%, rgba(6,3,1,0.55) 60%, rgba(6,3,1,0.70) 100%);
+      inset: 0;
+      pointer-events: none;
+      position: absolute;
+      z-index: 1;
+    }
+    .guide > *:not(.guide-bg):not(.guide-bg-overlay) {
+      position: relative;
+      z-index: 2;
+    }
 
     /* section header */
     .guide-header {
@@ -671,6 +698,11 @@
        GUIDE SECTION
   ════════════════════════════════ -->
   <section class="guide" id="guide" aria-label="Combat Guide">
+
+    <div class="guide-bg" aria-hidden="true">
+      <img src="jtw2.png" alt="">
+    </div>
+    <div class="guide-bg-overlay" aria-hidden="true"></div>
 
     <header class="guide-header">
       <h2 class="guide-title">The Art of Words</h2>
