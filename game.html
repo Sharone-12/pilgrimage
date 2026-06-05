@@ -130,7 +130,7 @@
       background:
         radial-gradient(ellipse 80% 50% at 50% 100%, rgba(116,34,25,0.20), transparent 70%),
         linear-gradient(180deg, #0e0d1a 0%, #1a1a2e 55%, #0a0a18 100%);
-      border-right: 2px solid rgba(201,168,76,0.28);
+      border-right: 1px solid rgba(201,168,76,0.22);
       box-shadow: inset -8px 0 28px -10px rgba(0,0,0,0.55);
       display: grid;
       grid-template-rows: auto auto 1fr;
@@ -278,11 +278,11 @@
     .history-entry .h-line.verdict.hit  { color: #7fbf95; }
     .history-entry .h-line.verdict.miss { color: #e07260; }
 
-    /* ════════ RIGHT COLUMN — parchment ════════ */
+    /* ════════ RIGHT COLUMN — dark ink wash (matches left) ════════ */
     .input-col {
       background:
-        repeating-linear-gradient(0deg, rgba(80,52,25,0.055) 0 2px, transparent 2px 14px),
-        linear-gradient(180deg, #f5ecd7 0%, #ead7a8 55%, #f0e0c0 100%);
+        radial-gradient(ellipse 80% 50% at 50% 100%, rgba(116,34,25,0.16), transparent 70%),
+        linear-gradient(180deg, #0e0d1a 0%, #1a1a2e 55%, #0a0a18 100%);
       display: flex;
       flex-direction: column;
       gap: 14px;
@@ -293,13 +293,12 @@
     }
     .input-col::before {
       background:
-        radial-gradient(circle at 20% 30%, rgba(26,26,46,0.07) 0 1px, transparent 2px),
-        radial-gradient(circle at 80% 60%, rgba(116,34,25,0.08) 0 1px, transparent 2px);
+        radial-gradient(circle at 20% 30%, rgba(201,168,76,0.05) 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 60%, rgba(192,57,43,0.06) 0 1px, transparent 2px);
       background-size: 90px 110px, 140px 125px;
       content: "";
       inset: 0;
-      mix-blend-mode: multiply;
-      opacity: 0.5;
+      opacity: 0.6;
       pointer-events: none;
       position: absolute;
       z-index: 0;
@@ -307,11 +306,11 @@
     .input-col > * { position: relative; z-index: 1; }
     .input-col.show { animation: fadeUp 0.6s 1.1s ease forwards; }
 
-    /* HP vessels */
+    /* HP vessels — dark */
     .hp-section {
-      background: rgba(26,26,46,0.06);
-      border: 1px solid rgba(26,26,46,0.18);
-      box-shadow: inset 0 0 14px rgba(116,34,25,0.05);
+      background: rgba(245,236,215,0.04);
+      border: 1px solid rgba(201,168,76,0.30);
+      box-shadow: inset 0 0 14px rgba(0,0,0,0.30);
       display: flex;
       flex-direction: column;
       gap: 9px;
@@ -320,6 +319,7 @@
     .hp-section.show { animation: none; }
     .hp-row { align-items: center; display: flex; gap: 14px; }
     .hp-label {
+      color: var(--gold);
       font-size: 0.66rem;
       font-weight: 900;
       letter-spacing: 0.18em;
@@ -328,10 +328,10 @@
     }
     .hp-track {
       background:
-        repeating-linear-gradient(45deg, rgba(26,26,46,0.04) 0 2px, transparent 2px 7px),
-        rgba(26,26,46,0.12);
-      border: 2px solid rgba(26,26,46,0.45);
-      box-shadow: inset 1px 1px 0 rgba(26,26,46,0.20);
+        repeating-linear-gradient(45deg, rgba(245,236,215,0.04) 0 2px, transparent 2px 7px),
+        rgba(0,0,0,0.40);
+      border: 2px solid rgba(201,168,76,0.40);
+      box-shadow: inset 1px 1px 0 rgba(0,0,0,0.45);
       flex: 1;
       height: 18px;
       overflow: hidden;
@@ -346,12 +346,13 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(255,255,255,0.20), transparent 45%, rgba(0,0,0,0.18));
+      background: linear-gradient(180deg, rgba(255,255,255,0.18), transparent 45%, rgba(0,0,0,0.30));
       pointer-events: none;
     }
     .hp-fill.demon  { background: linear-gradient(90deg, #6b1410, #8b1a10 40%, #c0392b); width: 100%; }
     .hp-fill.player { background: linear-gradient(90deg, #1f4736, #2d5a45 40%, #476f62); width: 100%; }
     .hp-num {
+      color: var(--paper);
       font-size: 0.72rem;
       font-weight: 900;
       letter-spacing: 0.04em;
@@ -359,15 +360,15 @@
       text-align: right;
     }
 
-    /* demon info dossier card */
+    /* demon info dossier card — dark with parchment tint */
     #demon-info-card {
-      background: #F5ECD7;
-      border: 2px solid #C9A84C;
+      background: rgba(245,236,215,0.05);
+      border: 1px solid #C9A84C;
       border-radius: 2px;
       box-shadow:
-        3px 5px 0 rgba(26,26,46,0.16),
-        inset 0 0 22px rgba(201,168,76,0.14),
-        inset 0 0 0 1px rgba(116,34,25,0.10);
+        3px 5px 0 rgba(0,0,0,0.35),
+        inset 0 0 22px rgba(201,168,76,0.08);
+      color: #F5ECD7;
       display: flex;
       flex-direction: column;
       gap: 9px;
@@ -375,11 +376,10 @@
       position: relative;
     }
     #demon-info-card::before {
-      /* aged corner notches */
       content: '';
       position: absolute;
       inset: 4px;
-      border: 1px dashed rgba(201,168,76,0.40);
+      border: 1px dashed rgba(201,168,76,0.32);
       pointer-events: none;
     }
     #demon-info-card::after {
@@ -409,7 +409,7 @@
       text-transform: uppercase;
     }
     .info-row .info-value {
-      color: #1a1a2e;
+      color: #F5ECD7;
       font-family: "Noto Serif", Georgia, serif;
       font-size: 0.9rem;
     }
@@ -417,7 +417,7 @@
       color: #C9A84C;
       font-style: italic;
     }
-    .info-row + .info-row { border-top: 1px dotted rgba(26,26,46,0.18); padding-top: 8px; }
+    .info-row + .info-row { border-top: 1px dotted rgba(201,168,76,0.20); padding-top: 8px; }
 
     /* legacy hint-text (now hidden, replaced by card row) */
     .hint-text { display: none !important; }
@@ -430,7 +430,7 @@
       min-height: 0;
     }
     .prompt-label {
-      color: var(--ink);
+      color: var(--gold);
       font-size: 0.66rem;
       font-weight: 900;
       letter-spacing: 0.22em;
@@ -438,11 +438,11 @@
     }
     .prompt-input {
       background:
-        repeating-linear-gradient(0deg, rgba(80,52,25,0.06) 0 1px, transparent 1px 28px),
-        rgba(245,236,215,0.94);
-      border: 2px solid rgba(26,26,46,0.40);
-      box-shadow: inset 2px 2px 0 rgba(116,34,25,0.08);
-      color: var(--ink);
+        repeating-linear-gradient(0deg, rgba(245,236,215,0.04) 0 1px, transparent 1px 28px),
+        rgba(245,236,215,0.08);
+      border: 1px solid #C9A84C;
+      box-shadow: inset 0 0 18px rgba(0,0,0,0.25);
+      color: #F5ECD7;
       flex: 1;
       font-family: "Noto Serif",Georgia,serif;
       font-size: clamp(0.88rem, 1.05vw, 0.96rem);
@@ -455,11 +455,11 @@
       width: 100%;
     }
     .prompt-input:focus {
-      border-color: rgba(192,57,43,0.55);
-      box-shadow: inset 2px 2px 0 rgba(116,34,25,0.08), 0 0 0 3px rgba(192,57,43,0.14);
+      border-color: var(--vermillion);
+      box-shadow: inset 0 0 18px rgba(0,0,0,0.25), 0 0 0 3px rgba(192,57,43,0.22);
       outline: none;
     }
-    .prompt-input::placeholder { color: rgba(26,26,46,0.36); font-style: italic; }
+    .prompt-input::placeholder { color: rgba(245,236,215,0.30); font-style: italic; }
     .prompt-input.rippling { animation: inputRipple 1s ease-in-out infinite; }
 
     .strike-row { align-items: stretch; display: flex; gap: 14px; }
@@ -497,19 +497,19 @@
     .strike-btn.splat { animation: inkSplat 0.4s ease; }
 
     .thinking-line {
-      color: rgba(26,26,46,0.46);
+      color: rgba(245,236,215,0.55);
       font-size: 0.70rem;
       font-style: italic;
       min-height: 14px;
       text-align: center;
     }
 
-    /* LAST HIT — stamped result */
+    /* LAST HIT — stamped result on dark */
     .last-hit {
-      background: rgba(245,236,215,0.65);
-      border: 2px solid rgba(26,26,46,0.22);
+      background: rgba(245,236,215,0.05);
+      border: 1px solid rgba(201,168,76,0.30);
       border-left-width: 4px;
-      color: rgba(26,26,46,0.78);
+      color: #F5ECD7;
       display: flex;
       flex-direction: column;
       font-size: 0.82rem;
@@ -525,8 +525,8 @@
     }
     .last-hit .h { color: var(--gold); }
     .last-hit .m { color: #C0392B; }
-    .last-hit.hit  { border-left-color: var(--gold); animation: stamp 0.32s ease; }
-    .last-hit.miss { border-left-color: #C0392B; animation: stamp 0.32s ease; }
+    .last-hit.hit  { border-color: var(--gold); border-left-color: var(--gold); animation: stamp 0.32s ease; }
+    .last-hit.miss { border-color: #C0392B; border-left-color: #C0392B; animation: stamp 0.32s ease; }
     @keyframes stamp {
       0%   { transform: scale(1.4); opacity: 0; }
       60%  { transform: scale(0.96); opacity: 1; }
