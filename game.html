@@ -733,6 +733,7 @@
   <div class="arena-body">
     <div class="portrait-col" id="portrait-col">
       <div class="portrait-frame" id="portrait-frame">
+        <img id="portrait-img" alt="" style="display:none">
         <svg class="crack-overlay" viewBox="0 0 220 270" xmlns="http://www.w3.org/2000/svg">
           <path class="ink-crack" id="crack-a" d="M78,18 L68,78 L88,128 L73,198"/>
           <path class="ink-crack" id="crack-b" d="M118,58 L138,98 L158,88 L183,118"/>
@@ -855,7 +856,7 @@ const DEMONS = [
     weakness: 'make it lie about being defeated — the lie becomes truth',
     defeatLine: 'I am not defeated... I am not... no—',
     landscape: 'A foggy marsh. Every path looks right. None of them are.',
-    landscapeBg: '', portrait: '',
+    landscapeBg: '', portrait: 'deceiver.png',
   },
   {
     id: 'coward', name: 'The Coward', chineseName: '沙僧',
@@ -865,7 +866,7 @@ const DEMONS = [
     weakness: 'close every exit — make surrender the only option',
     defeatLine: 'There is... nowhere left to run. I yield.',
     landscape: 'A narrow mountain pass. One way forward. No way back.',
-    landscapeBg: '', portrait: '',
+    landscapeBg: '', portrait: 'coward.png',
   },
   {
     id: 'narcissist', name: 'The Narcissist', chineseName: '天蓬元帅',
@@ -875,7 +876,7 @@ const DEMONS = [
     weakness: 'force it to credit something external it cannot claim',
     defeatLine: 'I... did not do that. Someone else... I cannot say it.',
     landscape: 'A gilded palace, crumbling. Every portrait on the wall — the same face.',
-    landscapeBg: '', portrait: '',
+    landscapeBg: '', portrait: 'narcissist.png',
   },
   {
     id: 'paralytic', name: 'The Paralytic', chineseName: '木吒',
@@ -885,7 +886,7 @@ const DEMONS = [
     weakness: 'demand a hard yes or no — no room to escape',
     defeatLine: 'Yes... or no... I... yes. No. I—',
     landscape: 'A crossroads. Infinite forks. Every sign points everywhere.',
-    landscapeBg: '', portrait: '',
+    landscapeBg: '', portrait: 'paralytic.png',
   },
   {
     id: 'contrarian', name: 'The Contrarian', chineseName: '牛魔王',
@@ -895,7 +896,7 @@ const DEMONS = [
     weakness: 'make it contradict itself or disagree with its own nature',
     defeatLine: 'I disagree with... my own disagreement. I cannot exist.',
     landscape: 'A frozen battlefield. Two armies. Neither moving. Neither wrong.',
-    landscapeBg: '', portrait: '',
+    landscapeBg: '', portrait: 'contrarian.png',
   },
   {
     id: 'heavenswill', name: "Heaven's Will", chineseName: '玉帝',
@@ -905,7 +906,7 @@ const DEMONS = [
     weakness: 'identify current demon form — apply its exact counter',
     defeatLine: 'All masks removed. Nothing left to hide behind. The Great Sage wins.',
     landscape: 'The gates of heaven. Gold. Silence. The end of everything.',
-    landscapeBg: '', portrait: '',
+    landscapeBg: '', portrait: 'heavenswill.png',
   },
 ];
 
@@ -1263,6 +1264,13 @@ function loadArena() {
   // fill demon info
   document.getElementById('d-name').textContent = d.name;
   document.getElementById('d-cjk').textContent  = d.chineseName;
+
+  const pImg = document.getElementById('portrait-img');
+  if (d.portrait) { pImg.src = d.portrait; pImg.style.display = 'block'; }
+  else { pImg.removeAttribute('src'); pImg.style.display = 'none'; }
+  document.body.style.background = d.landscapeBg
+    ? `#0a0604 url('${d.landscapeBg}') center/cover no-repeat fixed`
+    : '';
 
   const hintEl = document.getElementById('hint-text');
   if (d.showHint && d.hint) {
