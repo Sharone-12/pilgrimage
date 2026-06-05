@@ -1954,6 +1954,10 @@ function loadArena() {
   document.getElementById('last-hit').innerHTML = '<span>Last hit: —</span><span>Reason: —</span>';
   document.getElementById('thinking-line').textContent = '';
   document.getElementById('boss-badge').classList.remove('show');
+  const sb = document.getElementById('btn-strike');
+  sb.disabled = false;
+  sb.classList.remove('splat');
+  G.judging = false;
 
   // fill demon info
   document.getElementById('d-name').textContent = d.name;
