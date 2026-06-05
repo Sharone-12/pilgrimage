@@ -1450,16 +1450,43 @@ const API_BASE = (() => {
   return 'https://pilgrimage-api.onrender.com';
 })();
 
+/* ── persistent progress (localStorage) ── */
+const SAVE_KEY = 'pilgrimage:save:v1';
+function loadSave() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return null;
+    const s = JSON.parse(raw);
+    if (typeof s.dIdx !== 'number' || s.dIdx < 0 || s.dIdx >= DEMONS.length) return null;
+    return s;
+  } catch { return null; }
+}
+function saveProgress() {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      dIdx: G.dIdx, playerHp: G.playerHp, turn: G.turn,
+      bossForm: G.bossForm, cracks: G.cracks,
+      demonHp: demon()?._hp ?? null,
+      ts: Date.now(),
+    }));
+  } catch {}
+}
+function clearProgress() {
+  try { localStorage.removeItem(SAVE_KEY); } catch {}
+}
+
+const _saved = loadSave();
 const G = {
-  dIdx: 0,
-  playerHp: 100,
-  turn: 0,
-  bossForm: 0,
-  judging: false,
-  cracks: 0,
-  history: [],
+  dIdx:     _saved?.dIdx     ?? 0,
+  playerHp: _saved?.playerHp ?? 100,
+  turn:     _saved?.turn     ?? 0,
+  bossForm: _saved?.bossForm ?? 0,
+  judging:  false,
+  cracks:   _saved?.cracks   ?? 0,
+  history:  [],
 };
 const demon = () => DEMONS[G.dIdx];
+if (_saved?.demonHp != null && demon()) demon()._hp = _saved.demonHp;
 
 /* ════════════════════════
    SCENE MANAGER
@@ -1804,6 +1831,7 @@ async function strike() {
   input.value = '';
   btn.disabled = false;
   G.judging = false;
+  saveProgress();
 }
 
 /* ════════════════════════
@@ -1867,6 +1895,8 @@ function demonDies() {
       G.turn = 0;
       G.cracks = 0;
       G.bossForm = 0;
+      if (DEMONS[G.dIdx]) delete DEMONS[G.dIdx]._hp;
+      saveProgress();
 
       fade('s-victory-stamp', 's-path', 900);
 
@@ -1889,7 +1919,7 @@ function demonDies() {
 /* ════════════════════════
    GAME OVER
 ════════════════════════ */
-function gameOver() { fade('s-arena', 's-gameover', 800); }
+function gameOver() { clearProgress(); fade('s-arena', 's-gameover', 800); }
 
 function tryAgain() {
   const d = demon();
@@ -1908,6 +1938,7 @@ function tryAgain() {
    FINAL VICTORY
 ════════════════════════ */
 function finalVictory() {
+  clearProgress();
   fade('s-arena', 's-victory-final', 1200);
   setTimeout(() => {
     document.getElementById('gate-left').classList.add('open');
@@ -2020,6 +2051,7 @@ document.getElementById('prompt-input').addEventListener('keydown', e => {
 });
 document.getElementById('btn-tryagain').addEventListener('click', tryAgain);
 document.getElementById('btn-playagain').addEventListener('click', () => {
+  clearProgress();
   DEMONS.forEach(d => delete d._hp);
   Object.assign(G, { dIdx:0, playerHp:100, turn:0, bossForm:0, judging:false, cracks:0 });
   window.location.href = 'index.html';
