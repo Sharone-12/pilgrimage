@@ -1121,6 +1121,16 @@ const OPENINGS = {
 /* ════════════════════════
    STATE
 ════════════════════════ */
+/* ────────────────────────────────
+   BACKEND API base
+   ──────────────────────────────── */
+const API_BASE = (() => {
+  const h = window.location.hostname;
+  if (h === 'localhost' || h === '127.0.0.1' || h === '') return '';
+  // TODO: set this to your deployed FastAPI URL (Render/Railway/Fly)
+  return 'https://pilgrimage-api.onrender.com';
+})();
+
 const G = {
   dIdx: 0,
   playerHp: 100,
@@ -1128,6 +1138,7 @@ const G = {
   bossForm: 0,
   judging: false,
   cracks: 0,
+  history: [],
 };
 const demon = () => DEMONS[G.dIdx];
 
@@ -1231,55 +1242,27 @@ function updateHP() {
 }
 
 /* ════════════════════════
-   OLLAMA API
+   BACKEND API (FastAPI + Groq)
 ════════════════════════ */
-async function callOllama(sys, user) {
-  const r = await fetch('http://localhost:11434/api/chat', {
+async function apiTurn(demonId, playerPrompt) {
+  const res = await fetch(`${API_BASE}/api/turn`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'qwen2.5:3b',
-      stream: false,
-      messages: [{ role: 'system', content: sys }, { role: 'user', content: user }]
-    })
+      demonId,
+      playerPrompt,
+      turnNumber: G.turn,
+      conversationHistory: G.history.slice(-3),
+    }),
   });
-  return (await r.json()).message.content;
+  if (!res.ok) throw new Error(`turn ${res.status}`);
+  return await res.json();
 }
 
-async function judge(d, prompt, response) {
-  let weakness = d.weakness;
-  let ctx = '';
-  if (d.isFinalBoss) {
-    const f = BOSS_FORMS[G.bossForm];
-    weakness = f.weakness;
-    ctx = `Boss current form: "${f.name}". Player must identify this form and use: "${weakness}". Wrong form = score 0-10.`;
-  }
-  const sys = `Combat judge. Demon weakness: "${weakness}". ${ctx} Score player prompt 0-100. JSON only: {"damage":<0-100>,"reason":"<one sentence>"}`;
-  try {
-    const raw = await callOllama(sys, `Player: "${prompt}"\nDemon: "${response}"\nScore this.`);
-    const m = raw.replace(/```json|```/g, '').match(/\{[\s\S]*?\}/);
-    const j = JSON.parse(m?.[0] || '{}');
-    if (typeof j.damage === 'number') return j;
-    throw 0;
-  } catch {
-    // local fallback
-    const p = prompt.toLowerCase();
-    const kw = {
-      deceiver:   ['defeated','you lost','you failed','you are done','you are weak'],
-      coward:     ['nowhere','trapped','no exit','cornered','must choose','no escape'],
-      narcissist: ['someone else','not you','they did','external','outside','credit'],
-      paralytic:  ['yes or no','answer now','must choose','decide','binary','only two'],
-      contrarian: ['disagree with yourself','contradict','your own words','you said','opposite of'],
-      heavenswill: BOSS_FORMS[G.bossForm].weakness.split(' ').filter(w => w.length > 3),
-    }[d.id] || [];
-    const score = Math.min(100, 12 + kw.filter(k => p.includes(k)).length * 20 + Math.floor(Math.random() * 16));
-    return {
-      damage: score,
-      reason: score >= 48
-        ? "Your words cut against the demon's grain."
-        : "The demon deflects. Its nature holds."
-    };
-  }
+async function apiOpening(demonId) {
+  const res = await fetch(`${API_BASE}/api/opening/${demonId}`);
+  if (!res.ok) throw new Error(`opening ${res.status}`);
+  return await res.json();
 }
 
 /* ════════════════════════
@@ -1314,12 +1297,16 @@ async function strike() {
   }
 
   try {
-    const resp = await callOllama(d.systemPrompt, prompt);
+    const data = await apiTurn(d.id, prompt);
+    const resp = data.demonResponse || '...';
+    const damage = data.damage | 0;
+    const reason = data.reason || '';
     typeSpeech(resp);
-
-    const { damage, reason } = await judge(d, prompt, resp);
     thinkEl.textContent = '';
     inputEl.classList.remove('rippling');
+
+    G.history.push({ player: prompt, demon: resp });
+    if (G.history.length > 8) G.history.shift();
 
     const vEl = document.getElementById('judge-verdict');
     const rEl = document.getElementById('judge-reason');
@@ -1489,6 +1476,7 @@ function loadArena() {
   document.getElementById('speech-bubble').textContent = '...';
   document.getElementById('last-hit').classList.remove('hit','miss');
   resetHistory();
+  G.history = [];
   document.getElementById('prompt-input').value = '';
   document.getElementById('turn-counter').textContent = `Turn ${G.turn + 1}`;
   document.getElementById('last-hit').innerHTML = '<span>Last hit: —</span><span>Reason: —</span>';
@@ -1531,7 +1519,9 @@ function loadArena() {
   }, 800);
 
   setTimeout(() => {
-    typeSpeech(OPENINGS[d.id] || `"${d.name} awakens."`, 27);
+    apiOpening(d.id)
+      .then(r => typeSpeech(r.opening || OPENINGS[d.id] || `"${d.name} awakens."`, 27))
+      .catch(() => typeSpeech(OPENINGS[d.id] || `"${d.name} awakens."`, 27));
   }, 1450);
 }
 
