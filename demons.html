@@ -306,7 +306,16 @@
 
     /* lift page content above ambient layers */
     .nav, .page-header, .demon-grid, .seal { position: relative; z-index: 5; }
-    .nav { position: fixed; }
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 18px max(28px, calc((100vw - 1260px) / 2));
+      background: linear-gradient(180deg, rgba(8,4,2,0.92) 0%, rgba(8,4,2,0.78) 70%, rgba(8,4,2,0) 100%);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
 
     /* ── header reveal (blur → focus, letter-spacing expand) ── */
     .page-eyebrow, .page-title, .page-sub, .divider {
