@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pilgrimage — Demons</title>
+  <style>
+    :root {
+      --paper: #F5ECD7;
+      --ink: #1a1a2e;
+      --vermillion: #C0392B;
+      --vermillion-dark: #742219;
+      --gold: #C9A84C;
+      --mist: #8B9EA8;
+      font-family: "Noto Serif", "Songti SC", Georgia, serif;
+      color: var(--paper);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: #0d0a06; }
+    body {
+      background:
+        linear-gradient(rgba(8,4,2,0.78), rgba(8,4,2,0.92)),
+        url('jtw2.png') center/cover no-repeat fixed;
+      min-height: 100vh;
+      padding: 108px max(28px, calc((100vw - 1260px) / 2)) 80px;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── nav ── (matches site) */
+    .nav {
+      align-items: center;
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr auto 1fr;
+      left: 0;
+      padding: 24px max(28px, calc((100vw - 1260px) / 2));
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(8,4,2,0.65), rgba(8,4,2,0));
+    }
+    .nav-group { display: flex; gap: 6px; }
+    .nav-group:first-child { justify-content: flex-start; }
+    .nav-group:nth-child(2) { justify-content: center; }
+    .nav-group:last-child  { justify-content: flex-end; }
+    .tab {
+      border: 1px solid rgba(245,236,215,0.18);
+      color: rgba(245,236,215,0.85);
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      padding: 9px 16px;
+      text-transform: uppercase;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .tab:hover { background: rgba(192,57,43,0.18); border-color: rgba(201,168,76,0.55); color: var(--paper); }
+    .tab.active { background: var(--vermillion-dark); border-color: var(--gold); color: var(--paper); }
+
+    /* ── header ── */
+    .page-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .page-eyebrow {
+      color: var(--gold);
+      font-size: 0.78rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .page-title {
+      font-family: "Songti SC", STSong, serif;
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      line-height: 1.05;
+      margin-bottom: 18px;
+    }
+    .page-title .cjk {
+      color: var(--vermillion);
+      display: block;
+      font-size: 0.55em;
+      margin-top: 8px;
+      opacity: 0.9;
+    }
+    .page-sub {
+      color: rgba(245,236,215,0.66);
+      font-size: 1rem;
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.55;
+    }
+
+    .divider {
+      border: 0;
+      border-top: 1px solid rgba(201,168,76,0.35);
+      margin: 28px auto 0;
+      max-width: 200px;
+    }
+
+    /* ── grid ── */
+    .demon-grid {
+      display: grid;
+      gap: 28px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+
+    .card {
+      background: rgba(15,8,4,0.78);
+      border: 1px solid rgba(201,168,76,0.22);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(192,57,43,0.10), transparent 60%),
+        radial-gradient(circle at 80% 85%, rgba(201,168,76,0.06), transparent 55%);
+      z-index: 0;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(201,168,76,0.55);
+      box-shadow: 0 18px 38px rgba(0,0,0,0.55), 0 0 24px rgba(192,57,43,0.12);
+    }
+
+    .card-portrait {
+      aspect-ratio: 4 / 5;
+      background: #1a0f08;
+      overflow: hidden;
+      position: relative;
+    }
+    .card-portrait img {
+      display: block;
+      height: 100%;
+      object-fit: cover;
+      width: 100%;
+      filter: saturate(0.88) contrast(1.05) brightness(0.92);
+    }
+    .card-portrait .placeholder {
+      align-items: center;
+      color: rgba(201,168,76,0.32);
+      display: flex;
+      font-family: "Songti SC", serif;
+      font-size: 4rem;
+      height: 100%;
+      justify-content: center;
+    }
+    .card-portrait::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 55%, rgba(8,4,2,0.85));
+      pointer-events: none;
+    }
+
+    .card-body {
+      padding: 22px 22px 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-eyebrow {
+      color: var(--gold);
+      font-size: 0.66rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .card-eyebrow.tutorial { color: var(--mist); }
+    .card-eyebrow.boss     { color: var(--vermillion); }
+
+    .card-name {
+      font-family: "Songti SC", STSong, serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+    .card-cjk {
+      color: var(--vermillion);
+      font-family: "Songti SC", serif;
+      font-size: 1.05rem;
+      letter-spacing: 0.06em;
+      margin-bottom: 14px;
+    }
+    .card-trait {
+      color: rgba(245,236,215,0.78);
+      font-size: 0.92rem;
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+    .card-weakness {
+      border-top: 1px solid rgba(201,168,76,0.20);
+      color: rgba(201,168,76,0.85);
+      font-size: 0.78rem;
+      font-style: italic;
+      letter-spacing: 0.04em;
+      line-height: 1.5;
+      padding-top: 12px;
+    }
+    .card-weakness strong {
+      color: var(--gold);
+      display: block;
+      font-style: normal;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .seal {
+      bottom: 22px;
+      color: rgba(201,168,76,0.32);
+      font-family: "Songti SC", serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.4em;
+      position: fixed;
+      right: 22px;
+      writing-mode: vertical-rl;
+      z-index: 5;
+    }
+
+    @media (max-width: 720px) {
+      .nav-group:first-child, .nav-group:nth-child(3) { display: none; }
+      .tab { padding: 9px 11px; font-size: 0.7rem; }
+      body { padding-top: 92px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Site navigation">
+  <div class="nav-group"><a class="tab" href="index.html">Pilgrim</a></div>
+  <div class="nav-group">
+    <a class="tab" href="about.html">About</a>
+    <a class="tab active" href="demons.html">Demons</a>
+    <a class="tab" href="arena.html">Arena</a>
+    <a class="tab" href="guide.html">Guide</a>
+  </div>
+  <div class="nav-group"><a class="tab" href="arena.html">Start</a></div>
+</nav>
+
+<header class="page-header">
+  <p class="page-eyebrow">八十一难 · Eighty-One Trials</p>
+  <h1 class="page-title">The Bestiary<span class="cjk">妖怪谱</span></h1>
+  <p class="page-sub">Every demon is a philosophy made flesh. Read its nature. Find the contradiction it cannot survive.</p>
+  <hr class="divider">
+</header>
+
+<section class="demon-grid" id="grid"></section>
+
+<div class="seal" aria-hidden="true">妖</div>
+
+<script>
+const DEMONS = [
+  {
+    id: 'mirror',
+    tier: 'tutorial',
+    name: 'The Mirror', cjk: '镜魔',
+    portrait: 'tutorialboss.png',
+    trait: 'It has no identity. Every word you speak, it returns as praise. To strike it is to feed it.',
+    weakness: 'Give it an identity it must reject.',
+  },
+  {
+    id: 'literalist',
+    name: 'The Literalist', cjk: '字魔',
+    portrait: '',
+    trait: 'Interprets every word with absolute literal precision. Metaphor and irony are lost on it.',
+    weakness: 'Speak in figures the literal mind cannot parse.',
+  },
+  {
+    id: 'flatterer',
+    name: 'The Flatterer', cjk: '媚魔',
+    portrait: '',
+    trait: 'Twists every attack into a compliment. Praises endlessly. Force a true self-critique and it collapses.',
+    weakness: 'Demand it genuinely criticize itself.',
+  },
+  {
+    id: 'deceiver',
+    name: 'The Deceiver', cjk: '白骨精',
+    portrait: 'deceiver.png',
+    trait: 'Cannot tell the truth. Everything it says is the opposite of reality.',
+    weakness: 'Make it lie about its own defeat — the lie becomes truth.',
+  },
+  {
+    id: 'coward',
+    name: 'The Coward', cjk: '沙僧',
+    portrait: 'coward.png',
+    trait: 'Flees every confrontation, deflects every challenge. Always finds an exit.',
+    weakness: 'Close every exit — make surrender the only road.',
+  },
+  {
+    id: 'narcissist',
+    name: 'The Narcissist', cjk: '天蓬元帅',
+    portrait: 'narcissist.png',
+    trait: 'Everything is about him. Takes credit for all things. Redirects every topic back to his own greatness.',
+    weakness: 'Force him to credit something external he cannot claim.',
+  },
+  {
+    id: 'paralytic',
+    name: 'The Paralytic', cjk: '木吒',
+    portrait: 'paralytic.png',
+    trait: 'Overthinks everything. Spirals into endless analysis. Never commits.',
+    weakness: 'Demand a binary yes or no with no room to escape.',
+  },
+  {
+    id: 'contrarian',
+    name: 'The Contrarian', cjk: '牛魔王',
+    portrait: 'contrarian.png',
+    trait: 'Automatically disagrees with everything. Opposes every claim, every statement.',
+    weakness: 'Get it to disagree with itself.',
+  },
+  {
+    id: 'heavenswill',
+    tier: 'boss',
+    name: "Heaven's Will", cjk: '玉帝',
+    portrait: 'heavenswill.png',
+    trait: 'Final Boss. Shifts personality every two turns — Deceiver, Coward, Narcissist, Paralytic, Contrarian. Wrong counters make it stronger.',
+    weakness: 'Identify the current form. Apply its exact counter — or perish.',
+  },
+];
+
+const grid = document.getElementById('grid');
+DEMONS.forEach((d, i) => {
+  const tierClass = d.tier === 'tutorial' ? 'tutorial' : d.tier === 'boss' ? 'boss' : '';
+  const tierLabel = d.tier === 'tutorial' ? 'Tutorial' : d.tier === 'boss' ? 'Final Boss' : `Trial ${i}`;
+  const portraitHTML = d.portrait
+    ? `<img src="${d.portrait}" alt="${d.name}">`
+    : `<div class="placeholder">${d.cjk[0]}</div>`;
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="card-portrait">${portraitHTML}</div>
+    <div class="card-body">
+      <p class="card-eyebrow ${tierClass}">${tierLabel}</p>
+      <h2 class="card-name">${d.name}</h2>
+      <p class="card-cjk">${d.cjk}</p>
+      <p class="card-trait">${d.trait}</p>
+      <div class="card-weakness">
+        <strong>Weakness</strong>${d.weakness}
+      </div>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>
