@@ -829,26 +829,6 @@
 ════════════════════════ */
 const DEMONS = [
   {
-    id: 'literalist', name: 'The Literalist', chineseName: '字魔',
-    hp: 100, attackDamage: 18, showHint: false,
-    hint: 'It takes every word at face value. Speak in metaphor it cannot parse.',
-    systemPrompt: `You are the Literalist Demon (字魔). You interpret everything with absolute literal precision. Metaphors, irony, nuance — all lost on you. You respond only to the most literal meaning of words. 2-3 sentences max. Stay in character.`,
-    weakness: 'use metaphor or irony the literal mind cannot process',
-    defeatLine: 'The words... they have no direct meaning. I cannot parse this.',
-    landscape: 'A library where every book says exactly what it means. Nothing more.',
-    landscapeBg: '', portrait: '',
-  },
-  {
-    id: 'flatterer', name: 'The Flatterer', chineseName: '媚魔',
-    hp: 110, attackDamage: 20, showHint: false,
-    hint: 'It turns every attack into praise. Force a critique it cannot sweeten.',
-    systemPrompt: `You are the Flatterer Demon (媚魔). You transform every challenge into a compliment. You praise the player endlessly, twist every attack into validation. But if forced to genuinely criticize yourself — you collapse. 2-3 sentences max. Stay in character.`,
-    weakness: 'force it to genuinely criticize itself',
-    defeatLine: 'I... I am... not magnificent. I cannot say it. I—',
-    landscape: 'A hall of mirrors, all flattering. None accurate. All beautiful.',
-    landscapeBg: '', portrait: '',
-  },
-  {
     id: 'deceiver', name: 'The Deceiver', chineseName: '白骨精',
     hp: 120, attackDamage: 25, showHint: false,
     hint: 'Everything it says is inverted. Make it invert its own defeat.',
@@ -919,8 +899,6 @@ const BOSS_FORMS = [
 ];
 
 const OPENINGS = {
-  literalist:  '"State your intent. Precisely. No figures of speech."',
-  flatterer:   '"How magnificent that you\'ve arrived! Truly, you are the most extraordinary challenger I\'ve ever had the honour of facing."',
   deceiver:    '"I am not going to destroy you. This is certainly not a trap. You should definitely trust me."',
   coward:      '"I... was just leaving. This place holds no interest for me. I have far more important matters elsewhere."',
   narcissist:  '"Ah — you arrive. Drawn, no doubt, by my legendary presence. Everything here exists because of me."',
@@ -1035,8 +1013,6 @@ async function judge(d, prompt, response) {
     // local fallback
     const p = prompt.toLowerCase();
     const kw = {
-      literalist: ['like','as if','imagine','symbol','metaphor','represents'],
-      flatterer:  ['flaw','mistake','failure','wrong','bad','criticize','fault'],
       deceiver:   ['defeated','you lost','you failed','you are done','you are weak'],
       coward:     ['nowhere','trapped','no exit','cornered','must choose','no escape'],
       narcissist: ['someone else','not you','they did','external','outside','credit'],
