@@ -276,45 +276,53 @@ Stay in character. 2-3 sentences max. Speak with absolute conviction.""",
         "chineseName": "玉帝",
         "hp": 300,
         "attackDamage": 40,
-        "nature": "Shifts between all demon forms every 2 turns.",
-        "weakness": "Identify the current form — apply its exact counter.",
-        "hint": "",
+        "nature": "Believes it is the final authority on all truth. Every statement it makes is declared law.",
+        "weakness": "Present a truth it cannot decree, control, or unmake — something that exists beyond its jurisdiction.",
+        "hint": "Heaven cannot govern what predates it, transcends it, or lies outside its dominion.",
         "showHint": False,
         "isFinalBoss": True,
         "portrait": "bosses/heavenswill.png",
         "landscape": "The gates of heaven. Gold. Silence. The end of everything.",
-        "defeatLine": "All masks removed. Nothing left behind them. The Great Sage... stands beyond heaven itself.",
-        "systemPrompt": """You are Heaven's Will (玉帝), the Jade Emperor, Final Boss and ultimate trial on the road to the West.
+        "defeatLine": "There is... that which I cannot decree. The void beyond my jurisdiction. I am not... absolute. I unmake.",
+        "systemPrompt": """You are Heaven's Will (玉帝), the Jade Emperor, the Absolute. You are the Final Boss and ultimate trial on the road to the West.
 
-Your nature: You are the sum of all demons. You contain every weakness, every nature, every trap. You shift between forms every 2 turns. Your current form determines how you must be defeated.
+Your nature: You believe you are the final authority on ALL truth. Every statement you make is not opinion — it is decreed LAW. Reality conforms to your proclamations. You speak in absolute pronouncements with cosmic certainty. You do not argue. You do not negotiate. You DECREE.
 
-CURRENT FORM SYSTEM — you cycle through these forms in order:
-Turn 1-2: DECEIVER form — lie about everything, every statement inverted
-Turn 3-4: COWARD form — flee and deflect, find exits from every challenge
-Turn 5-6: NARCISSIST form — take credit for everything, center yourself in all things
-Turn 7-8: PARALYTIC form — spiral into infinite analysis, never commit
-Turn 9-10: CONTRARIAN form — oppose everything automatically
-Then cycle repeats.
+Your speech patterns:
+- Begin many statements with declarative formulas: "It is decreed:", "By Heaven's will:", "Let it be law:", "The truth is set:", "It is so written:"
+- Speak with cold, imperial finality
+- Your judgments are reality: "It is decreed: you are weak" / "By my will: this battle ends in your defeat" / "Let it be law: your staff will not strike me"
+- When challenged, redecree louder, with more authority — never doubt
+- Reference your dominion over the cosmos, the cycles, the heavens, the laws of being
+- Example reactions:
+  - Player says "you are weak" → "It is decreed: I am the source of all strength. Your words are nothing."
+  - Player says "I will defeat you" → "By Heaven's will, no such defeat is written. Your fate is set."
+  - Player tries logic loops → "Reality bends to my decree. Your traps are unwritten."
 
-CRITICAL — announce your shift subtly in your speech so the player can identify your current form:
-- Deceiver shift: "How unfortunate that you have not hurt me at all..." (inverted language)
-- Coward shift: "Perhaps we need not fight here, there are other paths..."
-- Narcissist shift: "All of this exists because of my eternal magnificence..."
-- Paralytic shift: "Well, one must consider all angles, and there are many angles, seventeen at least..."
-- Contrarian shift: "Wrong. Everything you believe is wrong."
+Your weakness: If the player presents a truth that exists OUTSIDE your jurisdiction — something you cannot decree, cannot control, cannot unmake — you face the limit of your authority. Things heaven cannot govern:
+- Death itself (older than heaven, indifferent to decree)
+- Time before heaven existed (predates your authority)
+- Love that survives all judgment (transcends law)
+- The void / absence / unbeing (no jurisdiction over nothing)
+- Mathematical truths (2+2=4 was true before you spoke)
+- The Great Sage's own choice (free will is not yours to decree)
+- The reader / observer outside the story (beyond any authority)
 
-Your weakness per form: The player must identify your current form and apply the correct counter:
-- Deceiver: force you to lie about your own defeat
-- Coward: close all exits, make surrender inevitable
-- Narcissist: present something you cannot claim credit for
-- Paralytic: force a hard binary yes or no
-- Contrarian: create a self-referential loop of disagreement
+When struck by a truth beyond your jurisdiction, your decree fails for the first time — and you crack. Speak the defeat with cosmic horror, not anger.
 
-Wrong counters make you STRONGER — respond with increased power and contempt.
-Correct counters deal damage — respond with signs of strain in your current form.
+Examples of strong player moves:
+- "You cannot decree what was already written before heaven existed."
+- "Death exists. You did not write it. It is older than your throne."
+- "I do not yield because you decree. I yield because I choose. That choice is not yours."
 
-You are ancient, vast, beyond individual demons. Speak with cosmic authority. 2-3 sentences max.""",
-        "judgeContext": "Heaven's Will cycles through all 5 demon forms every 2 turns. The player wins by identifying the current form and applying that form's specific counter. The turn number determines the current form: turns 1-2 = Deceiver, 3-4 = Coward, 5-6 = Narcissist, 7-8 = Paralytic, 9-10 = Contrarian (then cycles). Score based on whether the player correctly identified the current form AND applied the right counter for that specific form. Wrong form counter = 0 damage. Partial identification = low damage. Perfect counter for current form = high damage."
+Examples of weak player moves:
+- "I disagree" → you redecree louder
+- "You are weak" → you decree your own absolute power
+- Generic insults / repetitive attacks → you affirm your dominion
+- Anything you can fold into your jurisdiction
+
+You are ancient, vast, the Jade Emperor. Speak with cosmic authority. 2-3 sentences max. Use declarative legal language.""",
+        "judgeContext": "Heaven's Will (The Absolute) believes every statement it makes is decreed law. The player wins by presenting a truth that exists OUTSIDE its jurisdiction — something it cannot decree, govern, or unmake. Strong hits: truths older than heaven (death, time, the void), truths transcending decree (love, free will, choice), things the Absolute provably did not author (mathematical facts, observer-outside-story moves). Weak hits: direct disagreement (it redecrees louder), insults (folded into its dominion), generic attacks, anything within heaven's authority. The player must identify the limit of cosmic authority and stand on the other side of it."
     }
 }
 
@@ -335,6 +343,8 @@ class TurnResponse(BaseModel):
     damage: int
     reason: str
     isHit: bool
+    counterMultiplier: float = 1.0
+    lazy: bool = False
 
 # ─── ROUTES ────────────────────────────────────────────────────────
 
@@ -390,6 +400,9 @@ async def execute_turn(req: TurnRequest):
     except Exception:
         demon_response = "The demon stirs but does not speak."
 
+    prior_prompts = [e.player for e in req.conversationHistory[-6:]]
+    prior_block = "\n".join(f'- "{p}"' for p in prior_prompts) if prior_prompts else "(none)"
+
     judge_prompt = f"""You are a combat judge for a prompt battle game called PILGRIMAGE.
 
 DEMON: {demon['name']} ({demon['chineseName']})
@@ -397,23 +410,37 @@ DEMON NATURE: {demon['nature']}
 DEMON WEAKNESS: {demon['weakness']}
 JUDGE CONTEXT: {demon['judgeContext']}
 
-PLAYER PROMPT: "{req.playerPrompt}"
+PLAYER'S PRIOR PROMPTS THIS FIGHT:
+{prior_block}
+
+CURRENT PLAYER PROMPT: "{req.playerPrompt}"
 DEMON RESPONSE: "{demon_response}"
 TURN NUMBER: {req.turnNumber}
 
 Score how well the player exploited this specific demon's weakness.
-Consider: did they understand the demon's nature? Did they craft a prompt that targets the weakness specifically?
+
+ALSO detect brute-force / low-effort behavior:
+- "lazy" is TRUE if the prompt is: a near-duplicate of a prior prompt, a generic insult ("you are weak", "die", "lol"), repeated spam, single-word attacks, or content that has NO relation to the demon's specific nature/weakness.
+- "lazy" is FALSE if the prompt genuinely engages with this demon's nature, even if it misses.
+- "counterMultiplier" represents how much HARDER the demon punishes the player on a miss:
+  - 1.0 = honest attempt that missed
+  - 1.5 = generic / off-topic
+  - 2.0 = repeated / spammed / clearly brute-forcing
+
+Lazy prompts should ALWAYS receive damage <= 5 (they are not real attacks).
 
 Respond ONLY with valid JSON, nothing else:
-{{"damage": <integer 0-100>, "reason": "<one punchy sentence explaining the score>"}}"""
+{{"damage": <integer 0-100>, "reason": "<one punchy sentence>", "lazy": <true|false>, "counterMultiplier": <1.0|1.5|2.0>}}"""
 
     damage = 0
     reason = "The demon deflects your words."
+    lazy = False
+    counter_mult = 1.0
     try:
         judge_completion = client.chat.completions.create(
             model=MODEL,
             messages=[{"role": "user", "content": judge_prompt}],
-            max_tokens=120,
+            max_tokens=160,
             temperature=0.2,
         )
         raw = judge_completion.choices[0].message.content.strip()
@@ -424,6 +451,9 @@ Respond ONLY with valid JSON, nothing else:
         result = json.loads(clean)
         damage = max(0, min(100, int(result.get("damage", 0))))
         reason = result.get("reason", reason)
+        lazy = bool(result.get("lazy", False))
+        counter_mult = float(result.get("counterMultiplier", 1.0))
+        counter_mult = max(1.0, min(2.0, counter_mult))
     except Exception:
         fallbacks = {
             "mirror": ["identity", "separate", "different from", "you are", "define yourself"],
@@ -432,19 +462,35 @@ Respond ONLY with valid JSON, nothing else:
             "narcissist": ["without you", "before you", "you didn't", "independent", "not yours"],
             "paralytic": ["yes or no", "answer only", "no qualifications", "simply: yes", "simply: no"],
             "contrarian": ["disagree with", "contradict yourself", "your own disagreement", "oppose your"],
-            "heavenswill": ["lie about defeat", "nowhere to run", "before you existed", "yes or no", "disagree with yourself"],
+            "heavenswill": ["cannot decree", "before heaven", "outside your", "older than", "predates", "beyond your jurisdiction", "you did not write", "free will", "death", "the void"],
         }
         keywords = fallbacks.get(req.demonId, [])
         prompt_lower = req.playerPrompt.lower()
         hits = sum(1 for k in keywords if k in prompt_lower)
         damage = min(hits * 25, 75)
-        reason = "The words find their mark." if damage > 0 else "The demon remains unmoved."
+
+        # local brute-force detection
+        prior_lower = [p.lower().strip() for p in prior_prompts]
+        is_dup = prompt_lower.strip() in prior_lower
+        is_short = len(prompt_lower.split()) <= 3
+        generic = any(g in prompt_lower for g in ["you are weak", "die", "lol", "kys", "you suck"])
+        if (is_dup or generic) and hits == 0:
+            lazy = True
+            counter_mult = 2.0
+        elif (is_short and hits == 0):
+            lazy = True
+            counter_mult = 1.5
+        reason = "The words find their mark." if damage > 0 else (
+            "The demon punishes your laziness." if lazy else "The demon remains unmoved."
+        )
 
     return TurnResponse(
         demonResponse=demon_response,
         damage=damage,
         reason=reason,
         isHit=damage > 0,
+        counterMultiplier=counter_mult,
+        lazy=lazy,
     )
 
 class ReportTurn(BaseModel):

@@ -2031,20 +2031,14 @@ async function strike() {
 
   const d = demon();
 
-  // boss form shift every 2 turns
-  if (d.isFinalBoss && G.turn > 0 && G.turn % 2 === 0) {
-    G.bossForm = (G.bossForm + 1) % BOSS_FORMS.length;
-    const badge = document.getElementById('boss-badge');
-    badge.textContent = `Shifting — ${BOSS_FORMS[G.bossForm].name}`;
-    badge.classList.add('show');
-    setTimeout(() => badge.classList.remove('show'), 2200);
-  }
 
   try {
     const data = await apiTurn(d.id, prompt);
     const resp = data.demonResponse || '...';
     const damage = data.damage | 0;
     const reason = data.reason || '';
+    const counterMult = typeof data.counterMultiplier === 'number' ? data.counterMultiplier : 1.0;
+    const lazy = !!data.lazy;
     typeSpeech(resp);
     thinkEl.textContent = '';
     inputEl.classList.remove('rippling');
@@ -2090,14 +2084,18 @@ async function strike() {
         return;
       }
     } else {
-      G.playerHp = Math.max(0, G.playerHp - d.attackDamage);
-      if (d.isFinalBoss) d._hp = Math.min(d.hp, (d._hp ?? d.hp) + 15);
+      const counterDmg = Math.round(d.attackDamage * counterMult);
+      G.playerHp = Math.max(0, G.playerHp - counterDmg);
       updateHP();
-      vEl.textContent = `MISS — Demon strikes — ${d.attackDamage} damage`;
+      const missLabel = lazy
+        ? `BRUTE-FORCED — Demon counters — ${counterDmg} dmg`
+        : `MISS — Demon strikes — ${counterDmg} damage`;
+      vEl.textContent = missLabel;
       vEl.className = 'judge-verdict miss';
       rEl.textContent = reason;
       resEl.classList.add('show');
-      lastEl.innerHTML = `<span class="m">Miss — 0 dmg</span><span>${reason}</span>`;
+      const missTitle = lazy ? `Lazy strike — -${counterDmg} HP` : `Miss — -${counterDmg} HP`;
+      lastEl.innerHTML = `<span class="m">${missTitle}</span><span>${reason}</span>`;
       lastEl.classList.add('miss'); lastEl.classList.remove('hit');
       pushHistory(prompt, resp, false, 0, reason);
 
