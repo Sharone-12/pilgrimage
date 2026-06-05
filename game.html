@@ -539,6 +539,307 @@
     .flash-overlay { background: rgba(116,34,25,0); inset: 0; pointer-events: none; position: fixed; z-index: 20; }
     .flash-overlay.red { animation: flashRed 0.5s ease; }
 
+    /* ── strike impact: ink splat ── */
+    .ink-splat {
+      background: #1a1a2e;
+      border-radius: 50%;
+      pointer-events: none;
+      position: fixed;
+      z-index: 50;
+      animation: splatFly var(--duration, 0.45s) ease-out forwards;
+    }
+    @keyframes splatFly {
+      0%   { transform: translate(-50%,-50%) scale(1);   opacity: 1; }
+      100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0.3); opacity: 0; }
+    }
+
+    /* damage number float */
+    .dmg-float {
+      color: var(--vermillion);
+      font-family: "Songti SC","STSong",serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      pointer-events: none;
+      position: fixed;
+      text-shadow: 0 2px 14px rgba(0,0,0,0.7), 0 0 24px rgba(192,57,43,0.6);
+      transform: translate(-50%,-50%);
+      z-index: 60;
+      animation: dmgRise 0.85s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .dmg-float.crit { color: var(--gold); font-size: 3.2rem; text-shadow: 0 0 28px rgba(201,168,76,0.85); }
+    @keyframes dmgRise {
+      0%   { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+      20%  { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+      100% { transform: translate(-50%, calc(-50% - 80px)) scale(1); opacity: 0; }
+    }
+
+    /* shockwave overlay */
+    .shockwave {
+      background: radial-gradient(circle at center, rgba(192,57,43,0.35), rgba(192,57,43,0.10) 30%, transparent 60%);
+      inset: 0;
+      pointer-events: none;
+      position: fixed;
+      z-index: 40;
+      animation: shockPulse 0.4s ease-out forwards;
+    }
+    @keyframes shockPulse {
+      0%   { opacity: 0; }
+      10%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* CRITICAL stamp */
+    .crit-stamp {
+      color: var(--vermillion);
+      font-family: "Songti SC","STSong",serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: 0.36em;
+      pointer-events: none;
+      position: fixed;
+      text-shadow: 0 0 24px rgba(192,57,43,0.9), 0 2px 10px rgba(0,0,0,0.7);
+      text-transform: uppercase;
+      transform: translate(-50%, -50%);
+      z-index: 65;
+      animation: critRise 1s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    @keyframes critRise {
+      0%   { transform: translate(-50%, -30%) scale(2.2); opacity: 0; }
+      20%  { transform: translate(-50%, -50%) scale(1);   opacity: 1; }
+      70%  { transform: translate(-50%, -65%) scale(1);   opacity: 1; }
+      100% { transform: translate(-50%, -85%) scale(1);   opacity: 0; }
+    }
+
+    /* screen shake on critical */
+    .arena-shake { animation: screenShake 0.32s ease; }
+    @keyframes screenShake {
+      0%,100% { transform: translateX(0); }
+      20%     { transform: translateX(-5px); }
+      40%     { transform: translateX(5px); }
+      60%     { transform: translateX(-4px); }
+      80%     { transform: translateX(4px); }
+    }
+
+    /* portrait pulse on hit (zoom 1.0→1.05) */
+    .portrait-frame.impact { animation: portraitImpact 0.5s ease; }
+    @keyframes portraitImpact {
+      0%,100% { transform: scale(1); }
+      30%     { transform: scale(1.06); filter: brightness(1.25); }
+    }
+
+    /* MISS: demon empowered pulse */
+    .portrait-frame.empower { animation: portraitEmpower 0.9s ease; }
+    @keyframes portraitEmpower {
+      0%,100% { transform: scale(1); box-shadow: 0 14px 38px rgba(0,0,0,0.35); }
+      40%     { transform: scale(1.04); box-shadow: 0 14px 38px rgba(0,0,0,0.35), 0 0 60px rgba(192,57,43,0.55); }
+    }
+
+    /* HP num red flash on miss */
+    .hp-num.dmg { animation: hpDmg 0.7s ease; }
+    @keyframes hpDmg {
+      0%,100% { color: var(--paper); }
+      30%     { color: var(--vermillion); transform: scale(1.18); }
+    }
+    .hp-track.shake { animation: hpShake 0.35s ease; }
+    @keyframes hpShake {
+      0%,100% { transform: translateX(0); }
+      25%     { transform: translateX(-4px); }
+      75%     { transform: translateX(4px); }
+    }
+
+    /* ── BOSS-TRANSITION CINEMATIC ── */
+    #s-victory-stamp {
+      background: #050308;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .stamp-glyph {
+      color: var(--vermillion);
+      font-family: "Songti SC","STSong",serif;
+      font-size: clamp(8rem, 22vw, 16rem);
+      font-weight: 900;
+      letter-spacing: 0;
+      opacity: 0;
+      text-shadow:
+        0 0 60px rgba(192,57,43,0.55),
+        0 8px 0 rgba(0,0,0,0.55);
+      transform: scale(2.2) rotate(-6deg);
+    }
+    .stamp-glyph.go {
+      animation:
+        stampDrop 0.45s cubic-bezier(0.22,1,0.36,1) forwards,
+        stampPulse 1.6s 0.6s ease;
+    }
+    @keyframes stampDrop {
+      0%   { opacity: 0; transform: scale(2.2) rotate(-6deg); filter: blur(8px); }
+      55%  { opacity: 1; transform: scale(0.94) rotate(-3deg); filter: blur(0); }
+      100% { opacity: 1; transform: scale(1)    rotate(-3deg); filter: blur(0); }
+    }
+    @keyframes stampPulse {
+      0%   { text-shadow: 0 0 60px rgba(192,57,43,0.55), 0 8px 0 rgba(0,0,0,0.55); }
+      50%  { text-shadow: 0 0 110px rgba(192,57,43,0.85), 0 8px 0 rgba(0,0,0,0.55); }
+      100% { text-shadow: 0 0 60px rgba(192,57,43,0.55), 0 8px 0 rgba(0,0,0,0.55); }
+    }
+    .stamp-glyph.fade-out { animation: stampFade 0.9s ease forwards; }
+    @keyframes stampFade {
+      0%   { opacity: 1; }
+      100% { opacity: 0; filter: blur(6px); }
+    }
+    .stamp-sub {
+      color: var(--gold);
+      font-size: 0.78rem;
+      letter-spacing: 0.42em;
+      opacity: 0;
+      text-transform: uppercase;
+      animation: fadeUp 0.7s 0.7s ease forwards;
+    }
+    .stamp-defeated {
+      color: rgba(245,236,215,0.78);
+      font-family: "Songti SC", serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.20em;
+      opacity: 0;
+      text-transform: uppercase;
+      animation: fadeUp 0.7s 0.9s ease forwards;
+    }
+
+    /* expanded path scene */
+    .path-top {
+      color: rgba(245,236,215,0.85);
+      font-size: 0.78rem;
+      letter-spacing: 0.32em;
+      opacity: 0;
+      position: absolute;
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+      text-transform: uppercase;
+      top: 7%;
+      width: 100%;
+      z-index: 4;
+      animation: fadeUp 0.8s 0.6s ease forwards;
+    }
+    .path-top .next-name {
+      color: var(--gold);
+      display: block;
+      font-family: "Songti SC", serif;
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      margin-top: 8px;
+    }
+    .path-skip-hint {
+      bottom: 16px;
+      color: rgba(245,236,215,0.4);
+      font-size: 0.66rem;
+      left: 50%;
+      letter-spacing: 0.28em;
+      opacity: 0;
+      pointer-events: none;
+      position: absolute;
+      text-transform: uppercase;
+      transform: translateX(-50%);
+      z-index: 4;
+      animation: fadeUp 0.6s 2.2s ease forwards;
+    }
+
+    /* particle layer */
+    .particle-layer {
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      position: absolute;
+      z-index: 2;
+    }
+    .particle {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0;
+    }
+    /* fog — large soft blobs drifting horizontally */
+    .particle.fog {
+      background: radial-gradient(circle, rgba(200,200,220,0.30), transparent 70%);
+      border-radius: 50%;
+      filter: blur(8px);
+      height: 160px;
+      width: 240px;
+      animation: fogDrift var(--dur, 28s) linear infinite;
+    }
+    @keyframes fogDrift {
+      0%   { transform: translateX(-30vw); opacity: 0; }
+      10%  { opacity: 0.7; }
+      90%  { opacity: 0.6; }
+      100% { transform: translateX(130vw); opacity: 0; }
+    }
+    /* dust — small yellow specks slowly drifting */
+    .particle.dust {
+      background: rgba(201,168,76,0.55);
+      border-radius: 50%;
+      height: 3px;
+      width: 3px;
+      animation: dustDrift var(--dur, 14s) linear infinite;
+    }
+    @keyframes dustDrift {
+      0%   { transform: translate(0,0); opacity: 0; }
+      20%  { opacity: 0.7; }
+      100% { transform: translate(var(--dx,40px), -60vh); opacity: 0; }
+    }
+    /* embers — gold/red rising sparks */
+    .particle.embers {
+      background: radial-gradient(circle, rgba(255,180,90,0.95), rgba(192,57,43,0.4) 60%, transparent);
+      border-radius: 50%;
+      filter: blur(0.6px);
+      height: 5px;
+      width: 5px;
+      animation: emberDrift var(--dur, 9s) linear infinite;
+    }
+    @keyframes emberDrift {
+      0%   { transform: translate(0,0) scale(0.6); opacity: 0; }
+      15%  { opacity: 0.95; }
+      100% { transform: translate(var(--dx,40px), -110vh) scale(1.3); opacity: 0; }
+    }
+    /* leaves — small ink-color flakes drifting diagonally */
+    .particle.leaves {
+      background: rgba(116,34,25,0.55);
+      border-radius: 60% 20% 60% 20%;
+      height: 8px;
+      width: 5px;
+      animation: leafFall var(--dur, 14s) linear infinite;
+    }
+    @keyframes leafFall {
+      0%   { transform: translate(0,-10vh) rotate(0deg); opacity: 0; }
+      15%  { opacity: 0.7; }
+      100% { transform: translate(var(--dx,60px), 110vh) rotate(720deg); opacity: 0; }
+    }
+    /* snow — white slow drift */
+    .particle.snow {
+      background: rgba(245,236,215,0.85);
+      border-radius: 50%;
+      box-shadow: 0 0 4px rgba(245,236,215,0.5);
+      height: 4px;
+      width: 4px;
+      animation: snowFall var(--dur, 18s) linear infinite;
+    }
+    @keyframes snowFall {
+      0%   { transform: translate(0,-10vh); opacity: 0; }
+      15%  { opacity: 0.9; }
+      100% { transform: translate(var(--dx,30px), 110vh); opacity: 0; }
+    }
+    /* gold_dust — twinkling gold */
+    .particle.gold_dust {
+      background: rgba(255,215,120,0.95);
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(201,168,76,0.85);
+      height: 3px;
+      width: 3px;
+      animation: goldDrift var(--dur, 12s) linear infinite;
+    }
+    @keyframes goldDrift {
+      0%,100% { transform: translate(0,0); opacity: 0; }
+      30%     { opacity: 1; }
+      50%     { transform: translate(var(--dx,20px), var(--dy,-30px)); opacity: 1; }
+      70%     { opacity: 0.5; }
+    }
+
     /* ── PATH TRANSITION ── */
     #s-path { background: #080610; flex-direction: column; overflow: hidden; }
 
@@ -973,15 +1274,31 @@
 </div>
 
 <!-- ══ PATH TRANSITION ══ -->
+<!-- ══ VICTORY STAMP (between bosses) ══ -->
+<div class="scene" id="s-victory-stamp">
+  <div class="stamp-glyph" id="stamp-glyph">妖</div>
+  <p class="stamp-sub">Demon Slain · 妖灭</p>
+  <p class="stamp-defeated" id="stamp-defeated">—</p>
+</div>
+
+<!-- ══ PATH BETWEEN ARENAS ══ -->
 <div class="scene" id="s-path">
   <div class="path-bg-solid" id="path-bg-solid"></div>
   <div class="path-overlay"></div>
+  <div class="particle-layer" id="particle-layer"></div>
+
+  <p class="path-top" id="path-top">
+    <span id="path-trial-text">—</span>
+    <span class="next-name" id="path-next-name">—</span>
+  </p>
+
   <div class="path-center" id="path-center">
     <hr class="path-rule">
     <p class="path-continues">The path west continues.</p>
     <p class="path-count" id="path-count"></p>
     <hr class="path-rule">
   </div>
+
   <div class="wukong-walker" id="wukong-walker">
     <div class="wukong-fig">
       <div class="w-staff"></div>
@@ -990,7 +1307,9 @@
       <div class="w-legs"><div class="w-leg"></div><div class="w-leg"></div></div>
     </div>
   </div>
+
   <p class="path-caption" id="path-caption"></p>
+  <p class="path-skip-hint">tap to continue</p>
 </div>
 
 <!-- ══ GAME OVER ══ -->
@@ -1242,6 +1561,102 @@ function updateHP() {
 }
 
 /* ════════════════════════
+   IMPACT EFFECTS
+════════════════════════ */
+function inkSplat(originEl, count = 10) {
+  const r = originEl.getBoundingClientRect();
+  const cx = r.left + r.width / 2;
+  const cy = r.top + r.height / 2;
+  for (let i = 0; i < count; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'ink-splat';
+    const angle = (360 / count) * i + Math.random() * 20;
+    const dist = 60 + Math.random() * 70;
+    const tx = Math.cos(angle * Math.PI / 180) * dist;
+    const ty = Math.sin(angle * Math.PI / 180) * dist;
+    const dur = 0.35 + Math.random() * 0.2;
+    const sz = 6 + Math.random() * 8;
+    dot.style.cssText =
+      `left:${cx}px;top:${cy}px;width:${sz}px;height:${sz}px;`+
+      `--tx:${tx}px;--ty:${ty}px;--duration:${dur}s;`;
+    document.body.appendChild(dot);
+    setTimeout(() => dot.remove(), dur * 1000 + 120);
+  }
+}
+
+function dmgFloat(damage, isCrit = false) {
+  const frame = document.getElementById('portrait-frame');
+  if (!frame) return;
+  const r = frame.getBoundingClientRect();
+  const cx = r.left + r.width / 2 + (Math.random() * 60 - 30);
+  const cy = r.top + r.height / 2;
+  const el = document.createElement('div');
+  el.className = 'dmg-float' + (isCrit ? ' crit' : '');
+  el.textContent = `-${damage}`;
+  el.style.left = cx + 'px';
+  el.style.top  = cy + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+function shockwave() {
+  const el = document.createElement('div');
+  el.className = 'shockwave';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 450);
+}
+
+function critStamp() {
+  const frame = document.getElementById('portrait-frame');
+  if (!frame) return;
+  const r = frame.getBoundingClientRect();
+  const cx = r.left + r.width / 2;
+  const cy = r.top - 10;
+  const el = document.createElement('div');
+  el.className = 'crit-stamp';
+  el.textContent = 'CRITICAL';
+  el.style.left = cx + 'px';
+  el.style.top  = cy + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1050);
+}
+
+function screenShake() {
+  const a = document.getElementById('s-arena');
+  a.classList.remove('arena-shake'); void a.offsetWidth;
+  a.classList.add('arena-shake');
+  setTimeout(() => a.classList.remove('arena-shake'), 340);
+}
+
+/* ── particles per landscape ── */
+const LANDSCAPE = {
+  deceiver:    { particles: 'fog',       count: 8  },
+  coward:      { particles: 'dust',      count: 18 },
+  narcissist:  { particles: 'embers',    count: 16 },
+  paralytic:   { particles: 'leaves',    count: 14 },
+  contrarian:  { particles: 'snow',      count: 22 },
+  heavenswill: { particles: 'gold_dust', count: 20 },
+  mirror:      { particles: 'fog',       count: 6  },
+};
+
+function spawnParticles(demonId) {
+  const layer = document.getElementById('particle-layer');
+  layer.innerHTML = '';
+  const cfg = LANDSCAPE[demonId] || { particles: 'dust', count: 14 };
+  for (let i = 0; i < cfg.count; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle ' + cfg.particles;
+    p.style.left = (Math.random() * 100) + 'vw';
+    p.style.top  = (Math.random() * 100) + 'vh';
+    p.style.setProperty('--dx', (Math.random() * 120 - 60) + 'px');
+    p.style.setProperty('--dy', (Math.random() * 60 - 30) + 'px');
+    p.style.setProperty('--dur', (6 + Math.random() * 18) + 's');
+    p.style.animationDelay = (-Math.random() * 12) + 's';
+    layer.appendChild(p);
+  }
+}
+
+/* ════════════════════════
    BACKEND API (FastAPI + Groq)
 ════════════════════════ */
 async function apiTurn(demonId, playerPrompt) {
@@ -1320,14 +1735,21 @@ async function strike() {
       vEl.className = 'judge-verdict hit';
       rEl.textContent = reason;
       resEl.classList.add('show');
-      lastEl.innerHTML = `<span class="h">Last hit: ${damage} dmg</span><span>${reason}</span>`;
+      const isCrit = damage > 75;
+      const verdictLabel = isCrit ? `CRITICAL · ${damage} dmg` : `Last hit: ${damage} dmg`;
+      lastEl.innerHTML = `<span class="h">${verdictLabel}</span><span>${reason}</span>`;
       lastEl.classList.add('hit'); lastEl.classList.remove('miss');
       pushHistory(prompt, resp, true, damage, reason);
 
+      // impact effects
+      inkSplat(document.getElementById('btn-strike'), isCrit ? 16 : 10);
+      dmgFloat(damage, isCrit);
       const frame = document.getElementById('portrait-frame');
-      frame.classList.add('shake');
-      setTimeout(() => frame.classList.remove('shake'), 500);
-      G.cracks = Math.min(G.cracks + 1, 3);
+      frame.classList.add('shake', 'impact');
+      setTimeout(() => frame.classList.remove('shake', 'impact'), 600);
+      if (damage > 60) shockwave();
+      if (isCrit) { critStamp(); screenShake(); G.cracks = 3; }
+      else G.cracks = Math.min(G.cracks + 1, 3);
       ['crack-a','crack-b','crack-c'].slice(0, G.cracks).forEach(id => {
         document.getElementById(id)?.classList.add('visible');
       });
@@ -1353,6 +1775,18 @@ async function strike() {
       fl.classList.add('red');
       setTimeout(() => fl.classList.remove('red'), 500);
 
+      // demon empowered + player HP shake
+      const frame = document.getElementById('portrait-frame');
+      frame.classList.remove('empower'); void frame.offsetWidth;
+      frame.classList.add('empower');
+      setTimeout(() => frame.classList.remove('empower'), 950);
+      const phpNum = document.getElementById('player-hp-num');
+      const phpTrack = phpNum.previousElementSibling;
+      phpNum.classList.remove('dmg'); void phpNum.offsetWidth;
+      phpNum.classList.add('dmg');
+      phpTrack && phpTrack.classList.add('shake');
+      setTimeout(() => { phpNum.classList.remove('dmg'); phpTrack && phpTrack.classList.remove('shake'); }, 750);
+
       if (G.playerHp <= 0) {
         G.judging = false;
         setTimeout(gameOver, 700);
@@ -1376,42 +1810,80 @@ async function strike() {
    DEMON DEATH → PATH
 ════════════════════════ */
 function demonDies() {
+  const defeated = demon();
   document.getElementById('portrait-frame').classList.add('shatter');
 
+  // ─── 1. shatter (1.5s) → 2. fade arena to victory-stamp ───
   setTimeout(() => {
-    const d = demon();
-    if (d.isFinalBoss) { finalVictory(); return; }
+    if (defeated.isFinalBoss) { finalVictory(); return; }
 
-    fade('s-arena', 's-path', 900);
+    // populate stamp with this demon's CJK glyph
+    const cjk = defeated.chineseName || '妖';
+    const glyph = document.getElementById('stamp-glyph');
+    glyph.textContent = cjk.charAt(cjk.length - 1);
+    glyph.classList.remove('go', 'fade-out');
+    document.getElementById('stamp-defeated').textContent = defeated.name + ' defeated';
 
-    // populate path screen
-    const remaining = DEMONS.length - G.dIdx - 2;
-    document.getElementById('path-count').textContent =
-      remaining > 0 ? `${remaining} trial${remaining !== 1 ? 's' : ''} remain.` : 'The final trial awaits.';
-    document.getElementById('path-caption').textContent = d.landscape;
+    fade('s-arena', 's-victory-stamp', 800);
 
-    // reset and trigger path animation
-    const pc = document.getElementById('path-center');
-    pc.classList.remove('show');
-    void pc.offsetWidth;
-    setTimeout(() => pc.classList.add('show'), 960);
-
-    // reset wukong animation by replacing element
-    const walker = document.getElementById('wukong-walker');
-    const clone = walker.cloneNode(true);
-    walker.parentNode.replaceChild(clone, walker);
-
-    // advance state
-    G.dIdx++;
-    G.turn = 0;
-    G.cracks = 0;
-    G.bossForm = 0;
-
+    // ─── 3. stamp drops in (after fade settles) ───
     setTimeout(() => {
-      fade('s-path', 's-transition', 700);
-      setTimeout(loadArena, 800);
-    }, 4200);
-  }, 1600);
+      glyph.classList.add('go');
+    }, 850);
+
+    // ─── 4. stamp holds, then fades ───
+    setTimeout(() => glyph.classList.add('fade-out'), 2700);
+
+    // ─── 5. cut to landscape scene (path) ───
+    setTimeout(() => {
+      const nextIdx = G.dIdx + 1;
+      const next = DEMONS[nextIdx];
+      const remaining = DEMONS.length - G.dIdx - 2;
+
+      document.getElementById('path-count').textContent =
+        remaining > 0
+          ? `${remaining} trial${remaining !== 1 ? 's' : ''} remain.`
+          : 'The final trial awaits.';
+      document.getElementById('path-caption').textContent = defeated.landscape;
+      document.getElementById('path-trial-text').textContent =
+        `Trial ${G.dIdx + 1} of ${DEMONS.length} complete.`;
+      document.getElementById('path-next-name').textContent =
+        next ? `${next.name} awaits.` : 'The final form awaits.';
+
+      // particles per next landscape
+      spawnParticles(next ? next.id : defeated.id);
+
+      // reset center reveal + wukong walk
+      const pc = document.getElementById('path-center');
+      pc.classList.remove('show');
+      void pc.offsetWidth;
+      setTimeout(() => pc.classList.add('show'), 700);
+
+      const walker = document.getElementById('wukong-walker');
+      walker.parentNode.replaceChild(walker.cloneNode(true), walker);
+
+      // advance state
+      G.dIdx++;
+      G.turn = 0;
+      G.cracks = 0;
+      G.bossForm = 0;
+
+      fade('s-victory-stamp', 's-path', 900);
+
+      // ─── 6. auto-advance after 5s OR tap to skip ───
+      let advanced = false;
+      const advance = () => {
+        if (advanced) return;
+        advanced = true;
+        document.getElementById('s-path').onclick = null;
+        document.getElementById('particle-layer').innerHTML = '';
+        fade('s-path', 's-transition', 700);
+        setTimeout(loadArena, 800);
+      };
+      document.getElementById('s-path').onclick = advance;
+      setTimeout(advance, 5000);
+    }, 3600);
+  }, 1500);
 }
 
 /* ════════════════════════
