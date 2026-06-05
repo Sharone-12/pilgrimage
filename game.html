@@ -647,6 +647,221 @@
       75%     { transform: translateX(4px); }
     }
 
+    /* ── END-OF-DEMON REPORT CARD ── */
+    #s-report {
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(116,34,25,0.22), transparent 70%),
+        linear-gradient(180deg, #0a0810 0%, #1a1a2e 50%, #050308 100%);
+      flex-direction: column;
+      padding: 40px 24px;
+    }
+    .report-card {
+      background: rgba(245,236,215,0.04);
+      border: 1px solid rgba(201,168,76,0.45);
+      box-shadow:
+        0 18px 50px rgba(0,0,0,0.6),
+        inset 0 0 30px rgba(201,168,76,0.08);
+      color: var(--paper);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      max-height: 90vh;
+      max-width: 640px;
+      opacity: 0;
+      overflow-y: auto;
+      padding: 32px 36px 28px;
+      position: relative;
+      transform: translateY(20px) scale(0.96);
+      width: 100%;
+    }
+    .report-card.show {
+      animation: reportRise 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    @keyframes reportRise {
+      0%   { opacity: 0; transform: translateY(20px) scale(0.96); filter: blur(6px); }
+      100% { opacity: 1; transform: translateY(0)    scale(1);    filter: blur(0); }
+    }
+    .report-card::before {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border: 1px dashed rgba(201,168,76,0.28);
+      pointer-events: none;
+    }
+    .report-card::after {
+      content: '战 报';
+      color: rgba(201,168,76,0.55);
+      font-family: "Songti SC", serif;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.40em;
+      position: absolute;
+      right: 18px;
+      top: 12px;
+    }
+
+    .rpt-header {
+      border-bottom: 1px solid rgba(201,168,76,0.30);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-bottom: 14px;
+      text-align: center;
+    }
+    .rpt-eyebrow {
+      color: var(--vermillion);
+      font-size: 0.66rem;
+      font-weight: 900;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+    }
+    .rpt-name {
+      font-family: "Songti SC","STSong",serif;
+      font-size: 1.7rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+    }
+    .rpt-cjk {
+      color: var(--gold);
+      font-family: "Songti SC", serif;
+      font-size: 1rem;
+      letter-spacing: 0.16em;
+      margin-left: 12px;
+    }
+
+    .rpt-grade-row {
+      align-items: center;
+      display: grid;
+      gap: 18px;
+      grid-template-columns: auto 1fr auto;
+      padding: 6px 4px;
+    }
+    .rpt-grade {
+      align-items: center;
+      background: radial-gradient(circle at 30% 25%, rgba(255,150,126,0.30), transparent 60%), linear-gradient(165deg, #d84838, #6b1f14);
+      border: 2.5px solid rgba(80,16,10,0.92);
+      border-radius: 46% 54% 50% 50% / 50% 44% 56% 50%;
+      box-shadow: inset 0 0 0 2.5px rgba(245,236,215,0.18), 0 6px 20px rgba(40,6,3,0.55);
+      color: var(--paper);
+      display: flex;
+      font-family: "Songti SC","STSong",serif;
+      font-size: 2.4rem;
+      font-weight: 900;
+      height: 72px;
+      justify-content: center;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.55);
+      width: 72px;
+    }
+    .rpt-stats {
+      color: rgba(245,236,215,0.85);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .rpt-stats strong { color: var(--gold); font-weight: 900; }
+    .rpt-summary {
+      color: rgba(245,236,215,0.92);
+      font-size: 0.92rem;
+      font-style: italic;
+      line-height: 1.5;
+      max-width: 280px;
+      text-align: right;
+    }
+
+    .rpt-block {
+      border-left: 3px solid var(--gold);
+      padding: 4px 0 4px 14px;
+    }
+    .rpt-block.worst { border-left-color: var(--vermillion); }
+    .rpt-block-label {
+      color: var(--gold);
+      font-size: 0.66rem;
+      font-weight: 900;
+      letter-spacing: 0.28em;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .rpt-block.worst .rpt-block-label { color: var(--vermillion); }
+    .rpt-block-prompt {
+      color: var(--paper);
+      font-family: "Noto Serif", Georgia, serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      line-height: 1.45;
+      margin-bottom: 4px;
+    }
+    .rpt-block-prompt::before { content: '"'; opacity: 0.6; }
+    .rpt-block-prompt::after  { content: '"'; opacity: 0.6; }
+    .rpt-block-reason {
+      color: rgba(245,236,215,0.62);
+      font-size: 0.74rem;
+      font-style: italic;
+      letter-spacing: 0.02em;
+      line-height: 1.4;
+    }
+
+    .rpt-optimal {
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.35);
+      padding: 14px 16px;
+      position: relative;
+    }
+    .rpt-optimal::before {
+      content: '✦ TRY NEXT TIME · 范例';
+      color: var(--gold);
+      display: block;
+      font-size: 0.64rem;
+      font-weight: 900;
+      letter-spacing: 0.28em;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .rpt-optimal-text {
+      color: var(--paper);
+      font-family: "Noto Serif", Georgia, serif;
+      font-size: 0.96rem;
+      font-style: italic;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .rpt-cta {
+      align-items: center;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      cursor: pointer;
+      display: flex;
+      font-family: "Songti SC", serif;
+      font-size: 0.82rem;
+      font-weight: 900;
+      justify-content: center;
+      letter-spacing: 0.30em;
+      margin: 6px auto 0;
+      min-width: 200px;
+      padding: 12px 26px;
+      text-transform: uppercase;
+      transition: background 0.2s, color 0.2s;
+    }
+    .rpt-cta:hover { background: var(--gold); color: var(--ink); }
+
+    .rpt-loading {
+      color: rgba(245,236,215,0.55);
+      font-size: 0.78rem;
+      font-style: italic;
+      letter-spacing: 0.18em;
+      padding: 60px 0;
+      text-align: center;
+    }
+    .rpt-loading::after { content: '...'; animation: dotPulse 1.2s infinite; }
+    @keyframes dotPulse {
+      0%,100% { opacity: 0.3; }
+      50%     { opacity: 1; }
+    }
+
     /* ── BOSS-TRANSITION CINEMATIC ── */
     #s-victory-stamp {
       background: #050308;
@@ -1274,6 +1489,49 @@
 </div>
 
 <!-- ══ PATH TRANSITION ══ -->
+<!-- ══ END-OF-DEMON REPORT ══ -->
+<div class="scene" id="s-report">
+  <div class="report-card" id="report-card">
+    <p class="rpt-loading" id="rpt-loading">consulting the judge</p>
+    <div id="rpt-body" style="display:none">
+      <div class="rpt-header">
+        <span class="rpt-eyebrow">demon defeated · 妖灭</span>
+        <h2 class="rpt-name">
+          <span id="rpt-name">—</span>
+          <span class="rpt-cjk" id="rpt-cjk">—</span>
+        </h2>
+      </div>
+
+      <div class="rpt-grade-row">
+        <div class="rpt-grade" id="rpt-grade">—</div>
+        <div class="rpt-stats">
+          <span>Turns: <strong id="rpt-turns">—</strong></span>
+          <span>Avg dmg: <strong id="rpt-avg">—</strong></span>
+        </div>
+        <p class="rpt-summary" id="rpt-summary">—</p>
+      </div>
+
+      <div class="rpt-block">
+        <p class="rpt-block-label">Best strike — <span id="rpt-best-dmg">—</span> dmg</p>
+        <p class="rpt-block-prompt" id="rpt-best-prompt">—</p>
+        <p class="rpt-block-reason" id="rpt-best-reason">—</p>
+      </div>
+
+      <div class="rpt-block worst">
+        <p class="rpt-block-label">Weakest — <span id="rpt-worst-dmg">—</span> dmg</p>
+        <p class="rpt-block-prompt" id="rpt-worst-prompt">—</p>
+        <p class="rpt-block-reason" id="rpt-worst-reason">—</p>
+      </div>
+
+      <div class="rpt-optimal">
+        <p class="rpt-optimal-text" id="rpt-optimal">—</p>
+      </div>
+
+      <button class="rpt-cta" id="btn-report-continue">Continue</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ VICTORY STAMP (between bosses) ══ -->
 <div class="scene" id="s-victory-stamp">
   <div class="stamp-glyph" id="stamp-glyph">妖</div>
@@ -1484,6 +1742,7 @@ const G = {
   judging:  false,
   cracks:   _saved?.cracks   ?? 0,
   history:  [],
+  demonTurns: [],
 };
 const demon = () => DEMONS[G.dIdx];
 if (_saved?.demonHp != null && demon()) demon()._hp = _saved.demonHp;
@@ -1707,6 +1966,49 @@ async function apiOpening(demonId) {
   return await res.json();
 }
 
+async function apiReport(demonId, turns) {
+  const res = await fetch(`${API_BASE}/api/report`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ demonId, turns }),
+  });
+  if (!res.ok) throw new Error(`report ${res.status}`);
+  return await res.json();
+}
+
+function showReport(defeated, data, onContinue) {
+  const card = document.getElementById('report-card');
+  const loading = document.getElementById('rpt-loading');
+  const body = document.getElementById('rpt-body');
+
+  document.getElementById('rpt-name').textContent = defeated.name;
+  document.getElementById('rpt-cjk').textContent = defeated.chineseName;
+  document.getElementById('rpt-grade').textContent = data.grade || '—';
+  document.getElementById('rpt-turns').textContent = data.turnCount ?? '—';
+  document.getElementById('rpt-avg').textContent   = data.avgDamage ?? '—';
+  document.getElementById('rpt-summary').textContent = data.summary || '';
+
+  const best = data.best || {}, worst = data.worst || {};
+  document.getElementById('rpt-best-dmg').textContent     = best.damage ?? '—';
+  document.getElementById('rpt-best-prompt').textContent  = best.prompt  || '—';
+  document.getElementById('rpt-best-reason').textContent  = best.reason  || '';
+  document.getElementById('rpt-worst-dmg').textContent    = worst.damage ?? '—';
+  document.getElementById('rpt-worst-prompt').textContent = worst.prompt  || '—';
+  document.getElementById('rpt-worst-reason').textContent = worst.reason  || '';
+  document.getElementById('rpt-optimal').textContent      = data.optimalExample || '—';
+
+  loading.style.display = 'none';
+  body.style.display = 'block';
+  card.classList.add('show');
+
+  const btn = document.getElementById('btn-report-continue');
+  const handler = () => {
+    btn.removeEventListener('click', handler);
+    onContinue();
+  };
+  btn.addEventListener('click', handler);
+}
+
 /* ════════════════════════
    COMBAT
 ════════════════════════ */
@@ -1749,6 +2051,7 @@ async function strike() {
 
     G.history.push({ player: prompt, demon: resp });
     if (G.history.length > 8) G.history.shift();
+    G.demonTurns.push({ prompt, damage, reason });
 
     const vEl = document.getElementById('judge-verdict');
     const rEl = document.getElementById('judge-reason');
@@ -1839,80 +2142,98 @@ async function strike() {
 ════════════════════════ */
 function demonDies() {
   const defeated = demon();
+  const turns = G.demonTurns.slice();
   document.getElementById('portrait-frame').classList.add('shatter');
 
-  // ─── 1. shatter (1.5s) → 2. fade arena to victory-stamp ───
+  // ─── 0. shatter (1.5s) → REPORT CARD → cinematic stamp ───
+  // Reset report scene UI
+  const card = document.getElementById('report-card');
+  card.classList.remove('show');
+  document.getElementById('rpt-loading').style.display = 'block';
+  document.getElementById('rpt-body').style.display = 'none';
+
+  // Kick off report fetch in parallel with shatter animation
+  const reportPromise = (turns.length > 0)
+    ? apiReport(defeated.id, turns).catch(() => null)
+    : Promise.resolve(null);
+
   setTimeout(() => {
     if (defeated.isFinalBoss) { finalVictory(); return; }
 
-    // populate stamp with this demon's CJK glyph
-    const cjk = defeated.chineseName || '妖';
-    const glyph = document.getElementById('stamp-glyph');
-    glyph.textContent = cjk.charAt(cjk.length - 1);
-    glyph.classList.remove('go', 'fade-out');
-    document.getElementById('stamp-defeated').textContent = defeated.name + ' defeated';
+    fade('s-arena', 's-report', 800);
 
-    fade('s-arena', 's-victory-stamp', 800);
-
-    // ─── 3. stamp drops in (after fade settles) ───
-    setTimeout(() => {
-      glyph.classList.add('go');
-    }, 850);
-
-    // ─── 4. stamp holds, then fades ───
-    setTimeout(() => glyph.classList.add('fade-out'), 2700);
-
-    // ─── 5. cut to landscape scene (path) ───
-    setTimeout(() => {
-      const nextIdx = G.dIdx + 1;
-      const next = DEMONS[nextIdx];
-      const remaining = DEMONS.length - G.dIdx - 2;
-
-      document.getElementById('path-count').textContent =
-        remaining > 0
-          ? `${remaining} trial${remaining !== 1 ? 's' : ''} remain.`
-          : 'The final trial awaits.';
-      document.getElementById('path-caption').textContent = defeated.landscape;
-      document.getElementById('path-trial-text').textContent =
-        `Trial ${G.dIdx + 1} of ${DEMONS.length} complete.`;
-      document.getElementById('path-next-name').textContent =
-        next ? `${next.name} awaits.` : 'The final form awaits.';
-
-      // particles per next landscape
-      spawnParticles(next ? next.id : defeated.id);
-
-      // reset center reveal + wukong walk
-      const pc = document.getElementById('path-center');
-      pc.classList.remove('show');
-      void pc.offsetWidth;
-      setTimeout(() => pc.classList.add('show'), 700);
-
-      const walker = document.getElementById('wukong-walker');
-      walker.parentNode.replaceChild(walker.cloneNode(true), walker);
-
-      // advance state
-      G.dIdx++;
-      G.turn = 0;
-      G.cracks = 0;
-      G.bossForm = 0;
-      if (DEMONS[G.dIdx]) delete DEMONS[G.dIdx]._hp;
-      saveProgress();
-
-      fade('s-victory-stamp', 's-path', 900);
-
-      // ─── 6. auto-advance after 5s OR tap to skip ───
-      let advanced = false;
-      const advance = () => {
-        if (advanced) return;
-        advanced = true;
-        document.getElementById('s-path').onclick = null;
-        document.getElementById('particle-layer').innerHTML = '';
-        fade('s-path', 's-transition', 700);
-        setTimeout(loadArena, 800);
+    reportPromise.then(data => {
+      const fallback = {
+        grade: 'C',
+        avgDamage: turns.length ? Math.round(turns.reduce((s,t)=>s+t.damage,0)/turns.length) : 0,
+        turnCount: turns.length,
+        best:  turns.slice().sort((a,b)=>b.damage-a.damage)[0],
+        worst: turns.slice().sort((a,b)=>a.damage-b.damage)[0],
+        optimalExample: defeated.hint || '',
+        summary: 'Combat record reviewed.',
       };
-      document.getElementById('s-path').onclick = advance;
-      setTimeout(advance, 5000);
-    }, 3600);
+      showReport(defeated, data || fallback, runCinematic);
+    });
+
+    function runCinematic() {
+      const cjk = defeated.chineseName || '妖';
+      const glyph = document.getElementById('stamp-glyph');
+      glyph.textContent = cjk.charAt(cjk.length - 1);
+      glyph.classList.remove('go', 'fade-out');
+      document.getElementById('stamp-defeated').textContent = defeated.name + ' defeated';
+
+      fade('s-report', 's-victory-stamp', 800);
+
+      setTimeout(() => glyph.classList.add('go'), 850);
+      setTimeout(() => glyph.classList.add('fade-out'), 2700);
+
+      setTimeout(() => {
+        const nextIdx = G.dIdx + 1;
+        const next = DEMONS[nextIdx];
+        const remaining = DEMONS.length - G.dIdx - 2;
+
+        document.getElementById('path-count').textContent =
+          remaining > 0
+            ? `${remaining} trial${remaining !== 1 ? 's' : ''} remain.`
+            : 'The final trial awaits.';
+        document.getElementById('path-caption').textContent = defeated.landscape;
+        document.getElementById('path-trial-text').textContent =
+          `Trial ${G.dIdx + 1} of ${DEMONS.length} complete.`;
+        document.getElementById('path-next-name').textContent =
+          next ? `${next.name} awaits.` : 'The final form awaits.';
+
+        spawnParticles(next ? next.id : defeated.id);
+
+        const pc = document.getElementById('path-center');
+        pc.classList.remove('show');
+        void pc.offsetWidth;
+        setTimeout(() => pc.classList.add('show'), 700);
+
+        const walker = document.getElementById('wukong-walker');
+        walker.parentNode.replaceChild(walker.cloneNode(true), walker);
+
+        G.dIdx++;
+        G.turn = 0;
+        G.cracks = 0;
+        G.bossForm = 0;
+        if (DEMONS[G.dIdx]) delete DEMONS[G.dIdx]._hp;
+        saveProgress();
+
+        fade('s-victory-stamp', 's-path', 900);
+
+        let advanced = false;
+        const advance = () => {
+          if (advanced) return;
+          advanced = true;
+          document.getElementById('s-path').onclick = null;
+          document.getElementById('particle-layer').innerHTML = '';
+          fade('s-path', 's-transition', 700);
+          setTimeout(loadArena, 800);
+        };
+        document.getElementById('s-path').onclick = advance;
+        setTimeout(advance, 5000);
+      }, 3600);
+    }
   }, 1500);
 }
 
@@ -1980,6 +2301,7 @@ function loadArena() {
   document.getElementById('last-hit').classList.remove('hit','miss');
   resetHistory();
   G.history = [];
+  G.demonTurns = [];
   document.getElementById('prompt-input').value = '';
   document.getElementById('turn-counter').textContent = `Turn ${G.turn + 1}`;
   document.getElementById('last-hit').innerHTML = '<span>Last hit: —</span><span>Reason: —</span>';

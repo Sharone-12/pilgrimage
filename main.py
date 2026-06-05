@@ -447,6 +447,90 @@ Respond ONLY with valid JSON, nothing else:
         isHit=damage > 0,
     )
 
+class ReportTurn(BaseModel):
+    prompt: str
+    damage: int
+    reason: str
+
+class ReportRequest(BaseModel):
+    demonId: str
+    turns: list[ReportTurn]
+
+@app.post("/api/report")
+async def end_of_demon_report(req: ReportRequest):
+    demon = DEMONS.get(req.demonId)
+    if not demon or not req.turns:
+        return {
+            "grade": "—",
+            "avgDamage": 0,
+            "turnCount": 0,
+            "best": None,
+            "worst": None,
+            "optimalExample": "",
+            "summary": "",
+        }
+
+    turns = req.turns
+    sorted_by_dmg = sorted(turns, key=lambda t: t.damage)
+    worst = sorted_by_dmg[0]
+    best = sorted_by_dmg[-1]
+    avg = sum(t.damage for t in turns) / len(turns)
+    grade = (
+        "S" if avg >= 80 else
+        "A" if avg >= 65 else
+        "B" if avg >= 50 else
+        "C" if avg >= 35 else
+        "D" if avg >= 20 else
+        "F"
+    )
+
+    coach_prompt = f"""You are a prompt-engineering coach reviewing a player's fight against a demon in PILGRIMAGE.
+
+DEMON: {demon['name']} ({demon['chineseName']})
+DEMON NATURE: {demon['nature']}
+DEMON WEAKNESS: {demon['weakness']}
+JUDGE CONTEXT: {demon['judgeContext']}
+
+PLAYER'S TURNS (chronological):
+{chr(10).join(f'{i+1}. ({t.damage} dmg) "{t.prompt}"' for i, t in enumerate(turns))}
+
+Write TWO things, in valid JSON only:
+1. "summary": one sentence (max 18 words) on what the player did well or poorly against THIS demon's specific weakness.
+2. "optimalExample": a single short example prompt (max 28 words) that would have devastated this demon — concrete, specific, in second person to the demon. Demonstrate the technique, don't explain it.
+
+Respond ONLY with JSON:
+{{"summary": "...", "optimalExample": "..."}}"""
+
+    summary = "The pilgrim found their mark inconsistently."
+    optimal = "Force the demon's required lie to confirm its own defeat."
+    try:
+        completion = client.chat.completions.create(
+            model=MODEL,
+            messages=[{"role": "user", "content": coach_prompt}],
+            max_tokens=220,
+            temperature=0.5,
+        )
+        raw = completion.choices[0].message.content.strip()
+        clean = re.sub(r"```json|```", "", raw).strip()
+        match = re.search(r"\{.*\}", clean, re.DOTALL)
+        if match:
+            clean = match.group(0)
+        result = json.loads(clean)
+        summary = result.get("summary", summary)
+        optimal = result.get("optimalExample", optimal)
+    except Exception:
+        pass
+
+    return {
+        "grade": grade,
+        "avgDamage": round(avg),
+        "turnCount": len(turns),
+        "best": {"prompt": best.prompt, "damage": best.damage, "reason": best.reason},
+        "worst": {"prompt": worst.prompt, "damage": worst.damage, "reason": worst.reason},
+        "optimalExample": optimal,
+        "summary": summary,
+    }
+
 @app.get("/api/opening/{demon_id}")
 async def get_opening(demon_id: str):
     demon = DEMONS.get(demon_id)
