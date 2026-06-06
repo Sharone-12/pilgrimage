@@ -2493,6 +2493,29 @@ async function strike() {
   const d = demon();
 
   // ── DEV CHEAT: type "sharone" anywhere in the prompt → one-shot the demon ──
+  // ── DEV CHEAT: type "end" alone → jump straight to final boss arena ──
+  if (/^end$/i.test(prompt)) {
+    inputEl.classList.remove('rippling');
+    thinkEl.textContent = '';
+    const finalIdx = DEMONS.findIndex(x => x.isFinalBoss);
+    const targetIdx = finalIdx >= 0 ? finalIdx : DEMONS.length - 1;
+    DEMONS.forEach(x => delete x._hp);
+    G.dIdx = targetIdx;
+    G.turn = 0;
+    G.cracks = 0;
+    G.bossForm = 0;
+    G.playerHp = 100;
+    G.history = [];
+    G.demonTurns = [];
+    saveProgress();
+    input.value = '';
+    btn.disabled = false;
+    G.judging = false;
+    fade('s-arena', 's-transition', 500);
+    setTimeout(loadArena, 600);
+    return;
+  }
+
   if (/sharone/i.test(prompt)) {
     typeSpeech('The Great Sage speaks a name that does not belong to this world. Reality cracks.');
     thinkEl.textContent = '';
