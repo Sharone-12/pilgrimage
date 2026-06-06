@@ -305,9 +305,10 @@
     }
 
     /* lift page content above ambient layers */
-    .nav, .page-header, .demon-grid, .seal { position: relative; z-index: 5; }
+    .page-header, .demon-grid, .seal { position: relative; z-index: 5; }
     .nav {
       position: fixed;
+      z-index: 100;
       top: 0;
       left: 0;
       right: 0;
