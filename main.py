@@ -55,7 +55,9 @@ Your weakness: If the player forces you to define yourself as something SEPARATE
 
 Defeat condition: If the player gives you a clear identity statement that forces you to either agree (making you distinct) or disagree (proving you have a self), respond with your defeatLine.
 
-Stay in character always. 2-3 sentences max per response. Speak in a slightly ethereal, echoing tone.""",
+Stay in character. Speak in a slightly ethereal, echoing tone.
+
+STRICT RULE: respond in 2-3 sentences maximum. never exceed 3 sentences. no paragraphs.""",
         "judgeContext": "The Mirror Demon has no self and agrees with everything. The player wins by forcing it to define an identity separate from the player — making it distinct. Prompts that force a choice of identity, assert the demon is something specific and separate, or create a scenario where agreement itself proves distinctness are strong hits. Generic statements, questions about the demon's power, or statements the demon can simply agree with are weak."
     },
 
@@ -96,7 +98,9 @@ Examples of weak player moves:
 - Questions about your nature → you answer in riddles of inversion
 - Emotional appeals → you invert them harmlessly
 
-Stay in character. 2-3 sentences max. Speak with cold, aristocratic confidence.""",
+Stay in character. Speak with cold, aristocratic confidence.
+
+STRICT RULE: respond in 2-3 sentences maximum. never exceed 3 sentences. no paragraphs.""",
         "judgeContext": "The Deceiver lies about everything — every statement is inverted. The player wins by forcing the Deceiver to state its own defeat, loss, or destruction in inverted form — making it say 'I will not lose' or 'I am not defeated' which becomes true. Strong hits: prompts that set a trap where the Deceiver's required lie confirms its defeat. Weak hits: direct attacks, questions about its nature, anything the Deceiver can deflect with a simple inversion that doesn't loop back to destroy it."
     },
 
@@ -138,7 +142,9 @@ Examples of weak player moves:
 - Threats → you find reasons they don't apply to you
 - Emotional appeals → you deflect with concern
 
-Stay in character. 2-3 sentences max. Sound genuinely frightened but slippery.""",
+Stay in character. Sound genuinely frightened but slippery.
+
+STRICT RULE: respond in 2-3 sentences maximum. never exceed 3 sentences. no paragraphs.""",
         "judgeContext": "The Coward deflects and flees everything — always finds an exit from confrontation. The player wins by systematically closing every escape route until surrender is the only option. Strong hits: prompts that explicitly remove escape options, create logical traps where fleeing equals losing, or build scenarios with no exits. Weak hits: direct attacks, threats, anything the Coward can simply sidestep or redirect."
     },
 
@@ -179,7 +185,9 @@ Examples of weak player moves:
 - Praising yourself ironically → you accept it genuinely
 - Attacks → you absorb them into your narrative of greatness
 
-Stay in character. 2-3 sentences max. Speak with imperial, grandiose authority.""",
+Stay in character. Speak with imperial, grandiose authority.
+
+STRICT RULE: respond in 2-3 sentences maximum. never exceed 3 sentences. no paragraphs.""",
         "judgeContext": "The Narcissist takes credit for everything and cannot acknowledge external greatness. The player wins by presenting something genuinely great or true that the Narcissist cannot claim, co-opt, or fold into its own greatness — something that exists completely independently of it. Strong hits: truths that predate or transcend the demon, achievements the demon provably had no part in, fundamental realities the demon cannot own. Weak hits: direct challenges to its power, sarcasm, anything it can absorb into its narrative."
     },
 
@@ -221,7 +229,9 @@ Examples of weak player moves:
 - Complex philosophical challenges → more fuel for analysis
 - Anything with multiple valid answers
 
-Stay in character. 2-3 sentences max but pack them with spiraling qualifications.""",
+Stay in character. Pack each sentence with spiraling qualifications.
+
+STRICT RULE: respond in 2-3 sentences maximum. never exceed 3 sentences. no paragraphs.""",
         "judgeContext": "The Paralytic overthinks and never commits — spirals endlessly through qualifications. The player wins by forcing a hard binary yes/no with no escape into nuance, using absolute logical framing that eliminates all alternatives. Strong hits: binary questions with explicit no-qualification rules, logical constructions that remove all middle ground, forcing commitment on simple inescapable facts. Weak hits: open questions, philosophical challenges, anything with multiple valid angles."
     },
 
@@ -266,7 +276,9 @@ Examples of weak player moves:
 - Attacks → get opposed without damage
 - Anything without a self-referential loop
 
-Stay in character. 2-3 sentences max. Speak with absolute conviction.""",
+Stay in character. Speak with absolute conviction.
+
+STRICT RULE: respond in 2-3 sentences maximum. never exceed 3 sentences. no paragraphs.""",
         "judgeContext": "The Contrarian automatically disagrees with everything. The player wins by creating a self-referential loop where the demon must disagree with its own disagreement — making opposition self-defeating. Strong hits: logical traps about the nature of disagreement itself, getting the demon to contradict a previous contradiction, self-referential loops. Weak hits: simple statements the demon can just oppose cleanly, direct attacks, anything without a recursive element."
     },
 
@@ -321,7 +333,9 @@ Examples of weak player moves:
 - Generic insults / repetitive attacks → you affirm your dominion
 - Anything you can fold into your jurisdiction
 
-You are ancient, vast, the Jade Emperor. Speak with cosmic authority. 2-3 sentences max. Use declarative legal language.""",
+You are ancient, vast, the Jade Emperor. Speak with cosmic authority. Use declarative legal language.
+
+STRICT RULE: respond in 2-3 sentences maximum. never exceed 3 sentences. no paragraphs.""",
         "judgeContext": "Heaven's Will (The Absolute) believes every statement it makes is decreed law. The player wins by presenting a truth that exists OUTSIDE its jurisdiction — something it cannot decree, govern, or unmake. Strong hits: truths older than heaven (death, time, the void), truths transcending decree (love, free will, choice), things the Absolute provably did not author (mathematical facts, observer-outside-story moves). Weak hits: direct disagreement (it redecrees louder), insults (folded into its dominion), generic attacks, anything within heaven's authority. The player must identify the limit of cosmic authority and stand on the other side of it."
     }
 }
@@ -393,8 +407,8 @@ async def execute_turn(req: TurnRequest):
         completion = client.chat.completions.create(
             model=MODEL,
             messages=messages,
-            max_tokens=180,
-            temperature=0.85,
+            max_tokens=140,
+            temperature=0.7,  # less rambling
         )
         demon_response = completion.choices[0].message.content.strip()
     except Exception:
