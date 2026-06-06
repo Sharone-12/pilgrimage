@@ -1239,50 +1239,136 @@
     }
 
     /* ── FINAL VICTORY ── */
-    #s-victory-final { background: #000; flex-direction: column; overflow: hidden; }
+    /* ─────────────────────────────────────────
+       FINAL VICTORY — 7-phase cinematic
+       ───────────────────────────────────────── */
+    #s-victory-final {
+      background: #000;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 0;
+    }
 
-    .gate-left, .gate-right {
+    /* phase containers (all absolute, toggled) */
+    .vp { inset: 0; opacity: 0; pointer-events: none; position: absolute; transition: opacity 1s ease; }
+    .vp.visible { opacity: 1; pointer-events: all; }
+
+    /* PHASE 2 — silence */
+    #vp-silence { align-items: center; display: flex; justify-content: center; }
+    .silence-line {
+      color: rgba(245,236,215,0.55);
+      font-family: "Songti SC", serif;
+      font-size: 2.2rem;
+      letter-spacing: 0.5em;
+      opacity: 0;
+      text-shadow: 0 0 30px rgba(0,0,0,0.8);
+      animation: silenceBreathe 2.6s 0.2s ease forwards;
+    }
+    @keyframes silenceBreathe {
+      0%   { opacity: 0; }
+      30%  { opacity: 0.95; }
+      70%  { opacity: 0.95; }
+      100% { opacity: 0; }
+    }
+
+    /* PHASE 3 — heaven gate landscape + Wukong walks in */
+    #vp-landscape {
       background:
-        repeating-linear-gradient(90deg, rgba(201,168,76,0.07) 0 1px, transparent 1px 18px),
-        repeating-linear-gradient(0deg,  rgba(201,168,76,0.05) 0 1px, transparent 1px 18px),
-        linear-gradient(180deg, #14100000 0%, #2a1c04 40%, #3a2606 100%);
-      border: 1.5px solid rgba(201,168,76,0.25);
-      height: 100%;
+        radial-gradient(ellipse 60% 40% at 50% 60%, rgba(201,168,76,0.35), transparent 65%),
+        radial-gradient(ellipse 90% 60% at 50% 100%, rgba(40,18,8,0.8), transparent 70%),
+        linear-gradient(180deg, #1a1404 0%, #2a1f08 35%, #08060a 100%);
+    }
+    .heaven-gate-l, .heaven-gate-r {
+      background:
+        repeating-linear-gradient(90deg, rgba(201,168,76,0.08) 0 1px, transparent 1px 22px),
+        linear-gradient(180deg, #2a1f08 0%, #3a2610 50%, #1a1208 100%);
+      border-top: 2px solid rgba(201,168,76,0.50);
+      bottom: 0;
+      height: 70%;
       position: absolute;
-      top: 0;
-      width: 52%;
+      width: 38%;
       z-index: 1;
     }
-    .gate-left  { left: 0;  transform-origin: left; }
-    .gate-right { right: 0; transform-origin: right; }
-    .gate-left.open  { animation: gateOpenL 1.4s 0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
-    .gate-right.open { animation: gateOpenR 1.4s 0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
-    .gate-glow {
-      background: radial-gradient(ellipse 70% 55% at 50% 50%,
-        rgba(201,168,76,0.28) 0%, rgba(201,168,76,0.08) 42%, transparent 65%);
+    .heaven-gate-l { left: -2%; clip-path: polygon(0 100%, 0 12%, 80% 0, 100% 8%, 100% 100%); }
+    .heaven-gate-r { right: -2%; clip-path: polygon(0 8%, 20% 0, 100% 12%, 100% 100%, 0 100%); }
+    .heaven-arch {
+      background: radial-gradient(ellipse 80% 100% at 50% 100%, rgba(201,168,76,0.55), rgba(201,168,76,0.20) 40%, transparent 70%);
+      bottom: 18%;
+      height: 65%;
+      left: 50%;
+      position: absolute;
+      transform: translateX(-50%);
+      width: 38%;
+      z-index: 1;
+      animation: gateGlow 4s ease-in-out infinite;
+    }
+    @keyframes gateGlow {
+      0%,100% { opacity: 0.65; transform: translateX(-50%) scale(1); }
+      50%     { opacity: 0.95; transform: translateX(-50%) scale(1.04); }
+    }
+    .wukong-final {
+      bottom: 22%;
+      height: 95px;
+      left: -120px;
+      position: absolute;
+      z-index: 3;
+    }
+    .wukong-final.go { animation: wukongFinalWalk 4s 0.3s cubic-bezier(0.4,0,0.2,1) forwards; }
+    @keyframes wukongFinalWalk {
+      0%   { left: -120px; }
+      100% { left: 50%; transform: translateX(-50%); }
+    }
+    .wf-head { background: rgba(20,12,8,0.95); border-radius: 50%; height: 22px; margin: 0 auto 0 5px; width: 20px; }
+    .wf-body { background: rgba(20,12,8,0.95); border-radius: 4px 4px 6px 6px; height: 30px; width: 28px; }
+    .wf-legs { display: flex; gap: 4px; margin-top: 2px; }
+    .wf-leg  { background: rgba(20,12,8,0.92); border-radius: 0 0 4px 4px; height: 18px; width: 10px; }
+    .wf-leg.l { animation: wfLegL 0.7s linear infinite; }
+    .wf-leg.r { animation: wfLegR 0.7s linear infinite; }
+    @keyframes wfLegL { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+    @keyframes wfLegR { 0%,100% { transform: translateY(-3px); } 50% { transform: translateY(0); } }
+    .wf-staff {
+      background: rgba(116,34,25,0.85);
+      border-radius: 2px;
+      height: 52px;
+      left: 25px;
+      position: absolute;
+      top: -2px;
+      transform: rotate(-14deg);
+      width: 4px;
+    }
+
+    /* gold dust particles (drifting right→left) */
+    .gold-wind {
       inset: 0;
+      overflow: hidden;
       pointer-events: none;
       position: absolute;
-      z-index: 0;
-    }
-
-    .victory-outer {
-      align-items: center;
-      display: flex;
-      flex-direction: column;
-      opacity: 0;
-      position: relative;
-      width: min(660px, 88vw);
       z-index: 2;
     }
-    .victory-outer.show { animation: fadeUp 0.7s ease forwards; }
+    .gold-mote {
+      background: radial-gradient(circle, rgba(255,220,140,0.95), rgba(201,168,76,0.5) 60%, transparent);
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(255,200,80,0.6);
+      height: 3px;
+      position: absolute;
+      width: 3px;
+      animation: goldWind var(--dur, 9s) linear infinite;
+    }
+    @keyframes goldWind {
+      0%   { opacity: 0; transform: translate(0, 0); }
+      15%  { opacity: 0.9; }
+      85%  { opacity: 0.7; }
+      100% { opacity: 0; transform: translate(calc(-100vw - 40px), var(--dy, -20px)); }
+    }
 
+    /* PHASE 4 — scroll */
+    #vp-scroll { align-items: center; display: flex; flex-direction: column; justify-content: center; padding: 40px 20px; }
     .scroll-roller {
       background: linear-gradient(180deg, #5c3a1e, #3a2010 40%, #5c3a1e);
       border-radius: 12px;
       box-shadow: 0 4px 18px rgba(0,0,0,0.7), inset 0 2px 0 rgba(255,200,120,0.18);
       height: 24px;
-      width: 110%;
+      width: min(640px, 90vw);
       z-index: 2;
     }
     .victory-scroll {
@@ -1295,10 +1381,9 @@
       display: flex;
       flex-direction: column;
       padding: 38px 50px;
-      width: 100%;
+      width: min(620px, 88vw);
     }
     .victory-scroll.open { animation: scrollUnroll 0.8s 0.2s cubic-bezier(0.22,1,0.36,1) forwards; }
-
     .v-line {
       clip-path: inset(0 100% 0 0);
       color: #1a0a04;
@@ -1307,18 +1392,284 @@
       font-weight: 700;
       line-height: 1.5;
       padding: 7px 0;
+      text-align: center;
       text-shadow: 1px 1px 0 rgba(245,236,215,0.4);
     }
-    .v-line.accent { color: var(--vermillion); border-top: 1px solid rgba(116,34,25,0.28); margin-top: 8px; padding-top: 16px; }
+    .v-line.accent {
+      border-top: 1px solid rgba(116,34,25,0.28);
+      color: var(--vermillion);
+      font-size: clamp(1.2rem, 2vw, 1.5rem);
+      margin-top: 8px;
+      padding-top: 16px;
+    }
     .v-line.reveal { animation: lineReveal 0.55s cubic-bezier(0.16,1,0.3,1) forwards; }
 
-    #btn-playagain {
-      bottom: 72px;
+    /* PHASE 5 — vermillion seal stamp */
+    #vp-seal {
+      align-items: center;
+      background: #000;
+      display: flex;
+      justify-content: center;
+    }
+    .seal-stamp {
+      align-items: center;
+      background: radial-gradient(circle at 35% 28%, #d84838, #8b1a10 60%, #5a1108 100%);
+      border: 4px solid rgba(40,4,2,0.85);
+      border-radius: 50%;
+      box-shadow:
+        inset 0 0 0 4px rgba(245,236,215,0.18),
+        inset 0 0 40px rgba(40,4,2,0.5),
+        0 14px 50px rgba(0,0,0,0.7),
+        0 0 80px rgba(192,57,43,0);
+      color: var(--paper);
+      display: flex;
+      font-family: "Songti SC","STSong",serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      height: clamp(220px, 38vw, 320px);
+      justify-content: center;
+      letter-spacing: 0.06em;
+      line-height: 1.05;
+      opacity: 0;
+      text-shadow: 0 3px 0 rgba(0,0,0,0.5), 0 0 30px rgba(255,180,120,0.3);
+      transform: scale(3) translateY(-30vh) rotate(-12deg);
+      width: clamp(220px, 38vw, 320px);
+    }
+    .seal-stamp.go    { animation: sealDrop 0.7s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .seal-stamp.pulse { animation: sealPulse 1.2s 0.6s ease; }
+    @keyframes sealDrop {
+      0%   { opacity: 0; transform: scale(3)   translateY(-30vh) rotate(-12deg); filter: blur(6px); }
+      55%  { opacity: 1; transform: scale(0.92) translateY(0)    rotate(-3deg); filter: blur(0); }
+      80%  { transform: scale(1.04) translateY(0) rotate(-3deg); }
+      100% { opacity: 1; transform: scale(1)    translateY(0) rotate(-3deg); }
+    }
+    @keyframes sealPulse {
+      0%,100% { box-shadow: inset 0 0 0 4px rgba(245,236,215,0.18), inset 0 0 40px rgba(40,4,2,0.5), 0 14px 50px rgba(0,0,0,0.7), 0 0 80px rgba(192,57,43,0); }
+      50%     { box-shadow: inset 0 0 0 4px rgba(245,236,215,0.30), inset 0 0 40px rgba(40,4,2,0.5), 0 14px 50px rgba(0,0,0,0.7), 0 0 140px rgba(201,168,76,0.65); }
+    }
+
+    /* PHASE 5.5 — cutscene */
+    #cutscene-container {
+      background: #000;
+      inset: 0;
       opacity: 0;
       pointer-events: none;
+      position: fixed;
+      transition: opacity 1s ease;
+      z-index: 100;
+    }
+    #cutscene-container.visible { opacity: 1; pointer-events: all; }
+    #end-cutscene { display: block; height: 100%; object-fit: cover; width: 100%; }
+    #skip-cutscene {
+      background: rgba(245,236,215,0.10);
+      border: 1px solid var(--gold);
+      bottom: 2rem;
+      color: var(--gold);
+      cursor: pointer;
+      font-family: "Noto Serif", Georgia, serif;
+      font-size: 0.86rem;
+      letter-spacing: 0.16em;
+      padding: 0.5rem 1.2rem;
       position: absolute;
-      transition: opacity 0.8s ease;
-      z-index: 4;
+      right: 2rem;
+      transition: background 0.2s, color 0.2s;
+      z-index: 101;
+    }
+    #skip-cutscene:hover { background: var(--gold); color: var(--ink); }
+
+    /* PHASE 6 — stats card */
+    #vp-stats {
+      align-items: center;
+      background:
+        radial-gradient(ellipse 60% 30% at 50% 50%, rgba(201,168,76,0.10), transparent 65%),
+        #050308;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .stats-card {
+      background:
+        repeating-linear-gradient(0deg, rgba(80,52,25,0.06) 0 1px, transparent 1px 26px),
+        linear-gradient(180deg, #f5ecd7 0%, #ead7a8 100%);
+      border: 2px solid var(--gold);
+      box-shadow: 0 22px 60px rgba(0,0,0,0.65), inset 0 0 40px rgba(116,34,25,0.10);
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      max-width: 520px;
+      opacity: 0;
+      padding: 28px 32px 26px;
+      position: relative;
+      transform: translateY(40px);
+      width: 92%;
+    }
+    .stats-card.go { animation: statsRise 0.9s cubic-bezier(0.16,1,0.3,1) forwards; }
+    @keyframes statsRise {
+      0%   { opacity: 0; transform: translateY(40px); filter: blur(6px); }
+      100% { opacity: 1; transform: translateY(0);    filter: blur(0); }
+    }
+    .stats-card::before {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border: 1px dashed rgba(116,34,25,0.30);
+      pointer-events: none;
+    }
+    .stats-header {
+      border-bottom: 1px solid rgba(116,34,25,0.30);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding-bottom: 14px;
+      text-align: center;
+    }
+    .stats-title {
+      font-family: "Songti SC","STSong",serif;
+      font-size: clamp(1.5rem, 2.6vw, 1.9rem);
+      font-weight: 900;
+      letter-spacing: 0.20em;
+    }
+    .stats-title .cjk {
+      color: var(--vermillion);
+      font-size: 0.65em;
+      margin-left: 14px;
+    }
+    .stats-eyebrow {
+      color: var(--vermillion);
+      font-size: 0.66rem;
+      font-weight: 900;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+    }
+    .stats-rows {
+      display: grid;
+      gap: 6px;
+    }
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+    }
+    .stats-row .lbl {
+      color: rgba(26,26,46,0.78);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .stats-row .val {
+      color: var(--ink);
+      font-family: "Songti SC", serif;
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+    }
+    .stats-rank {
+      align-items: center;
+      border-top: 1px solid rgba(116,34,25,0.30);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-top: 14px;
+      text-align: center;
+    }
+    .stats-rank .rank-eyebrow {
+      color: rgba(26,26,46,0.55);
+      font-size: 0.66rem;
+      font-weight: 900;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+    }
+    .stats-rank .rank-name {
+      font-family: "Songti SC","STSong",serif;
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+    }
+    .stats-rank .rank-name .cjk { display: block; font-size: 0.55em; letter-spacing: 0.30em; opacity: 0.9; }
+    .stats-rank.gs   .rank-name { color: var(--gold);      text-shadow: 0 0 22px rgba(201,168,76,0.55); }
+    .stats-rank.pil  .rank-name { color: #b0b6b8;           text-shadow: 0 0 16px rgba(176,182,184,0.35); }
+    .stats-rank.mor  .rank-name { color: rgba(26,26,46,0.78); }
+
+    .stats-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 4px;
+    }
+    .stats-btn {
+      background: transparent;
+      border: 1px solid var(--ink);
+      color: var(--ink);
+      cursor: pointer;
+      font-family: "Songti SC", serif;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      padding: 11px 22px;
+      text-transform: uppercase;
+      transition: background 0.2s, color 0.2s;
+    }
+    .stats-btn:hover { background: var(--ink); color: var(--paper); }
+    .stats-btn.primary {
+      background: var(--vermillion);
+      border-color: var(--vermillion-dark, #742219);
+      color: var(--paper);
+    }
+    .stats-btn.primary:hover { background: var(--vermillion-dark, #742219); }
+
+    /* PHASE 7 — cutscene placeholder card (faded scroll fragment) */
+    .cutscene-locked {
+      align-items: center;
+      background: rgba(245,236,215,0.04);
+      border: 1px dashed rgba(201,168,76,0.40);
+      color: rgba(245,236,215,0.55);
+      cursor: not-allowed;
+      display: flex;
+      flex-direction: column;
+      font-family: "Songti SC", serif;
+      gap: 6px;
+      max-width: 520px;
+      opacity: 0;
+      padding: 18px 22px;
+      text-align: center;
+      width: 92%;
+    }
+    .cutscene-locked.go { animation: fadeUp 0.7s 0.4s ease forwards; }
+    .cutscene-locked .lock-eyebrow {
+      color: rgba(245,236,215,0.45);
+      font-size: 0.62rem;
+      font-weight: 900;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+    }
+    .cutscene-locked .lock-title {
+      color: rgba(245,236,215,0.78);
+      font-size: 0.95rem;
+      letter-spacing: 0.10em;
+    }
+    .cutscene-locked .lock-title::before { content: '▶ '; color: var(--gold); }
+
+    /* gold flood at end of arena (Phase 1) */
+    .gold-flood {
+      background: radial-gradient(circle, rgba(255,220,140,0.95), rgba(201,168,76,0.55) 30%, transparent 70%);
+      border-radius: 50%;
+      height: 100px;
+      opacity: 0;
+      pointer-events: none;
+      position: fixed;
+      transform: translate(-50%,-50%) scale(0);
+      width: 100px;
+      z-index: 70;
+    }
+    .gold-flood.go { animation: goldFlood 1.6s cubic-bezier(0.22,1,0.36,1) forwards; }
+    @keyframes goldFlood {
+      0%   { opacity: 0;    transform: translate(-50%,-50%) scale(0); }
+      30%  { opacity: 1; }
+      100% { opacity: 0;    transform: translate(-50%,-50%) scale(60); }
     }
 
     /* ── KEYFRAMES ── */
@@ -1586,23 +1937,83 @@
 </div>
 
 <!-- ══ FINAL VICTORY ══ -->
+<!-- ══ FINAL VICTORY — 7-phase cinematic ══ -->
 <div class="scene" id="s-victory-final">
-  <div class="gate-glow"></div>
-  <div class="gate-left"  id="gate-left"></div>
-  <div class="gate-right" id="gate-right"></div>
-  <div class="victory-outer" id="victory-outer">
+
+  <!-- PHASE 2 — silence -->
+  <div class="vp" id="vp-silence">
+    <p class="silence-line">. . .</p>
+  </div>
+
+  <!-- PHASE 3 — heaven gates + Wukong walks in -->
+  <div class="vp" id="vp-landscape">
+    <div class="heaven-gate-l"></div>
+    <div class="heaven-gate-r"></div>
+    <div class="heaven-arch"></div>
+    <div class="gold-wind" id="gold-wind"></div>
+    <div class="wukong-final" id="wukong-final">
+      <div class="wf-staff"></div>
+      <div class="wf-head"></div>
+      <div class="wf-body"></div>
+      <div class="wf-legs"><div class="wf-leg l"></div><div class="wf-leg r"></div></div>
+    </div>
+  </div>
+
+  <!-- PHASE 4 — scroll -->
+  <div class="vp" id="vp-scroll">
     <div class="scroll-roller"></div>
     <div class="victory-scroll" id="victory-scroll">
       <p class="v-line" data-i="0">The west has been reached.</p>
       <p class="v-line" data-i="1">The scriptures retrieved.</p>
-      <p class="v-line" data-i="2">The Great Sage — enlightened.</p>
-      <p class="v-line" data-i="3" style="padding:0;height:6px"> </p>
-      <p class="v-line" data-i="4">All demons defeated.</p>
-      <p class="v-line accent" data-i="5">The pilgrimage is complete.</p>
+      <p class="v-line" data-i="2">Eighty-one trials.</p>
+      <p class="v-line" data-i="3">Six demons.</p>
+      <p class="v-line" data-i="4">One mind, sharper than any staff.</p>
+      <p class="v-line" data-i="5">The Great Sage —</p>
+      <p class="v-line accent" data-i="6">enlightened.</p>
     </div>
     <div class="scroll-roller"></div>
   </div>
-  <button class="seal-btn" id="btn-playagain">Play Again</button>
+
+  <!-- PHASE 5 — vermillion seal -->
+  <div class="vp" id="vp-seal">
+    <div class="seal-stamp" id="seal-stamp">西行<br>圓滿</div>
+  </div>
+
+  <!-- PHASE 6 — stats card + PHASE 7 — cutscene locked card -->
+  <div class="vp" id="vp-stats">
+    <div class="stats-card" id="stats-card">
+      <div class="stats-header">
+        <span class="stats-eyebrow">Pilgrimage Complete · 西行</span>
+        <h2 class="stats-title">PILGRIMAGE COMPLETE <span class="cjk">圓滿</span></h2>
+      </div>
+      <div class="stats-rows">
+        <div class="stats-row"><span class="lbl">Demons Defeated</span><span class="val" id="stat-demons">— / —</span></div>
+        <div class="stats-row"><span class="lbl">Turns Taken</span>    <span class="val" id="stat-turns">—</span></div>
+        <div class="stats-row"><span class="lbl">Perfect Strikes</span><span class="val" id="stat-crits">—</span></div>
+        <div class="stats-row"><span class="lbl">Times Fallen</span>   <span class="val" id="stat-falls">—</span></div>
+        <div class="stats-row"><span class="lbl">Final HP</span>       <span class="val" id="stat-hp">— / 100</span></div>
+      </div>
+      <div class="stats-rank" id="stats-rank">
+        <span class="rank-eyebrow">Rank</span>
+        <span class="rank-name" id="rank-name">—<span class="cjk" id="rank-cjk">—</span></span>
+      </div>
+      <div class="stats-actions">
+        <button class="stats-btn primary" id="btn-playagain">Play Again</button>
+        <button class="stats-btn" id="btn-share">Share</button>
+      </div>
+    </div>
+
+    <div class="cutscene-locked" id="cutscene-locked">
+      <span class="lock-eyebrow">cutscene coming soon</span>
+      <span class="lock-title">The Road Ends Here</span>
+    </div>
+  </div>
+
+  <!-- PHASE 5.5 — cutscene video overlay -->
+  <div id="cutscene-container">
+    <video id="end-cutscene" src="cutscene.mp4" playsinline></video>
+    <button id="skip-cutscene">SKIP ›</button>
+  </div>
 </div>
 
 <script>
@@ -1725,6 +2136,10 @@ function saveProgress() {
       dIdx: G.dIdx, playerHp: G.playerHp, turn: G.turn,
       bossForm: G.bossForm, cracks: G.cracks,
       demonHp: demon()?._hp ?? null,
+      totalTurns: G.totalTurns,
+      perfectStrikes: G.perfectStrikes,
+      timesFallen: G.timesFallen,
+      finalHp: G.finalHp,
       ts: Date.now(),
     }));
   } catch {}
@@ -1743,6 +2158,11 @@ const G = {
   cracks:   _saved?.cracks   ?? 0,
   history:  [],
   demonTurns: [],
+  /* journey-wide stats (persist across demons) */
+  totalTurns:     _saved?.totalTurns     ?? 0,
+  perfectStrikes: _saved?.perfectStrikes ?? 0,
+  timesFallen:    _saved?.timesFallen    ?? 0,
+  finalHp:        _saved?.finalHp        ?? 100,
 };
 const demon = () => DEMONS[G.dIdx];
 if (_saved?.demonHp != null && demon()) demon()._hp = _saved.demonHp;
@@ -2085,6 +2505,7 @@ async function strike() {
       rEl.textContent = reason;
       resEl.classList.add('show');
       const isCrit = damage > 75;
+      if (isCrit) G.perfectStrikes++;
       const verdictLabel = isCrit ? `CRITICAL · ${damage} dmg` : `Last hit: ${damage} dmg`;
       lastEl.innerHTML = `<span class="h">${verdictLabel}</span><span>${reason}</span>`;
       lastEl.classList.add('hit'); lastEl.classList.remove('miss');
@@ -2152,6 +2573,7 @@ async function strike() {
   }
 
   G.turn++;
+  G.totalTurns++;
   document.getElementById('turn-counter').textContent = `Turn ${G.turn + 1}`;
   G.lastPrompt = prompt;
   input.value = '';
@@ -2263,7 +2685,11 @@ function demonDies() {
 /* ════════════════════════
    GAME OVER
 ════════════════════════ */
-function gameOver() { clearProgress(); fade('s-arena', 's-gameover', 800); }
+function gameOver() {
+  G.timesFallen++;
+  saveProgress();
+  fade('s-arena', 's-gameover', 800);
+}
 
 function tryAgain() {
   const d = demon();
@@ -2279,28 +2705,177 @@ function tryAgain() {
 }
 
 /* ════════════════════════
-   FINAL VICTORY
+   FINAL VICTORY — 7-phase cinematic
 ════════════════════════ */
 function finalVictory() {
-  clearProgress();
-  fade('s-arena', 's-victory-final', 1200);
+  G.finalHp = G.playerHp;
+  saveProgress();
+
+  // ─── PHASE 1 — biggest shatter + gold flood + 3 screen shakes ───
+  // (still in s-arena while this plays)
+  const frame = document.getElementById('portrait-frame');
+  if (frame) {
+    frame.classList.add('shatter');
+    inkSplat(frame, 30);
+    const r = frame.getBoundingClientRect();
+    const flood = document.createElement('div');
+    flood.className = 'gold-flood go';
+    flood.style.left = (r.left + r.width / 2) + 'px';
+    flood.style.top  = (r.top + r.height / 2) + 'px';
+    document.body.appendChild(flood);
+    setTimeout(() => flood.remove(), 1700);
+  }
+  // 3 decreasing screen shakes
+  setTimeout(() => screenShake(), 0);
+  setTimeout(() => screenShake(), 380);
+  setTimeout(() => screenShake(), 720);
+
+  // ─── transition to victory scene after Phase 1 (2s) ───
   setTimeout(() => {
-    document.getElementById('gate-left').classList.add('open');
-    document.getElementById('gate-right').classList.add('open');
-  }, 400);
+    fade('s-arena', 's-victory-final', 1500);
+    runVictoryPhases();
+  }, 2000);
+}
+
+function runVictoryPhases() {
+  const show = id => document.getElementById(id)?.classList.add('visible');
+  const hide = id => document.getElementById(id)?.classList.remove('visible');
+
+  // ─── PHASE 2 — SILENCE (3s) ───
+  setTimeout(() => show('vp-silence'), 100);
+  setTimeout(() => hide('vp-silence'), 3100);
+
+  // ─── PHASE 3 — Wukong walks across heaven gates (4s) ───
   setTimeout(() => {
-    const outer = document.getElementById('victory-outer');
-    outer.classList.add('show');
+    show('vp-landscape');
+    spawnGoldWind();
+    setTimeout(() => document.getElementById('wukong-final').classList.add('go'), 400);
+  }, 3400);
+
+  // ─── PHASE 4 — scroll unfurls (lines stagger 1s each) ───
+  setTimeout(() => {
+    hide('vp-landscape');
+    show('vp-scroll');
     const scroll = document.getElementById('victory-scroll');
     scroll.classList.add('open');
-    revealLines([...scroll.querySelectorAll('.v-line')], 900, 680, () => {
-      setTimeout(() => {
-        const btn = document.getElementById('btn-playagain');
-        btn.style.opacity = '1';
-        btn.style.pointerEvents = 'all';
-      }, 700);
-    });
-  }, 1900);
+    setTimeout(() => {
+      const lines = [...scroll.querySelectorAll('.v-line')];
+      lines.forEach((line, i) => setTimeout(() => line.classList.add('reveal'), i * 1000));
+    }, 600);
+  }, 7500);
+
+  // ─── PHASE 5 — vermillion seal stamp (2s) ───
+  setTimeout(() => {
+    hide('vp-scroll');
+    show('vp-seal');
+    const seal = document.getElementById('seal-stamp');
+    seal.classList.remove('go', 'pulse');
+    void seal.offsetWidth;
+    seal.classList.add('go', 'pulse');
+    // ink splat under seal
+    setTimeout(() => {
+      const r = seal.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const fakeOrigin = { getBoundingClientRect: () => ({ left: cx, top: cy, width: 0, height: 0 }) };
+      inkSplat(fakeOrigin, 20);
+    }, 600);
+  }, 7500 + 7 * 1000 + 800);
+
+  // ─── PHASE 5.5 — cutscene (if cutscene.mp4 exists) → PHASE 6 stats ───
+  const phase6At = 7500 + 7 * 1000 + 800 + 2400; // after seal pulse
+  setTimeout(() => {
+    hide('vp-seal');
+    tryCutsceneThenStats();
+  }, phase6At);
+}
+
+function spawnGoldWind() {
+  const layer = document.getElementById('gold-wind');
+  layer.innerHTML = '';
+  for (let i = 0; i < 28; i++) {
+    const m = document.createElement('div');
+    m.className = 'gold-mote';
+    m.style.left = (Math.random() * 100 + 100) + 'vw';
+    m.style.top  = (Math.random() * 100) + 'vh';
+    m.style.setProperty('--dy', (Math.random() * 80 - 40) + 'px');
+    m.style.setProperty('--dur', (8 + Math.random() * 10) + 's');
+    m.style.animationDelay = (-Math.random() * 14) + 's';
+    layer.appendChild(m);
+  }
+}
+
+function tryCutsceneThenStats() {
+  const container = document.getElementById('cutscene-container');
+  const video = document.getElementById('end-cutscene');
+  const skipBtn = document.getElementById('skip-cutscene');
+
+  const showStats = () => {
+    document.getElementById('vp-stats').classList.add('visible');
+    populateStats();
+    setTimeout(() => {
+      document.getElementById('stats-card').classList.add('go');
+      document.getElementById('cutscene-locked').classList.add('go');
+    }, 200);
+    clearProgress();
+  };
+
+  const dismissCutscene = () => {
+    container.style.opacity = '0';
+    setTimeout(() => {
+      container.style.display = 'none';
+      showStats();
+    }, 1000);
+  };
+
+  // attempt to load the video; if it errors (file missing), skip to stats
+  let resolved = false;
+  const onReady = () => {
+    if (resolved) return;
+    resolved = true;
+    container.style.display = 'block';
+    container.classList.add('visible');
+    setTimeout(() => video.play().catch(dismissCutscene), 1100);
+  };
+  const onFail = () => {
+    if (resolved) return;
+    resolved = true;
+    showStats();
+  };
+
+  video.addEventListener('loadeddata', onReady, { once: true });
+  video.addEventListener('error', onFail, { once: true });
+  video.addEventListener('ended', dismissCutscene, { once: true });
+  skipBtn.onclick = () => { video.pause(); dismissCutscene(); };
+
+  // give the browser ~1s to load; if nothing fired, fall through
+  setTimeout(() => { if (!resolved) onFail(); }, 1200);
+  // force the load attempt
+  try { video.load(); } catch { onFail(); }
+}
+
+function rankFor() {
+  if (G.timesFallen === 0 && G.perfectStrikes >= 3) {
+    return { name: 'Great Sage', cjk: '大聖', cls: 'gs' };
+  }
+  if (G.timesFallen <= 2) {
+    return { name: 'Pilgrim', cjk: '行者', cls: 'pil' };
+  }
+  return { name: 'Mortal', cjk: '凡人', cls: 'mor' };
+}
+
+function populateStats() {
+  document.getElementById('stat-demons').textContent = `${DEMONS.length} / ${DEMONS.length}`;
+  document.getElementById('stat-turns').textContent  = String(G.totalTurns);
+  document.getElementById('stat-crits').textContent  = String(G.perfectStrikes);
+  document.getElementById('stat-falls').textContent  = String(G.timesFallen);
+  document.getElementById('stat-hp').textContent     = `${G.finalHp} / 100`;
+  const rank = rankFor();
+  document.getElementById('rank-name').firstChild.textContent = rank.name;
+  document.getElementById('rank-cjk').textContent = rank.cjk;
+  const wrap = document.getElementById('stats-rank');
+  wrap.classList.remove('gs','pil','mor');
+  wrap.classList.add(rank.cls);
 }
 
 /* ════════════════════════
@@ -2398,8 +2973,33 @@ document.getElementById('btn-tryagain').addEventListener('click', tryAgain);
 document.getElementById('btn-playagain').addEventListener('click', () => {
   clearProgress();
   DEMONS.forEach(d => delete d._hp);
-  Object.assign(G, { dIdx:0, playerHp:100, turn:0, bossForm:0, judging:false, cracks:0 });
+  Object.assign(G, {
+    dIdx:0, playerHp:100, turn:0, bossForm:0, judging:false, cracks:0,
+    totalTurns:0, perfectStrikes:0, timesFallen:0, finalHp:100,
+  });
   window.location.href = 'index.html';
+});
+
+document.getElementById('btn-share').addEventListener('click', async () => {
+  const rank = rankFor();
+  const text = [
+    'PILGRIMAGE — 西行 complete',
+    `Rank: ${rank.name} (${rank.cjk})`,
+    `Turns: ${G.totalTurns} · Crits: ${G.perfectStrikes} · Falls: ${G.timesFallen}`,
+    `Final HP: ${G.finalHp}/100`,
+    'https://jttwpilgrimage.netlify.app',
+  ].join('\n');
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: 'PILGRIMAGE complete', text });
+    } else {
+      await navigator.clipboard.writeText(text);
+      const btn = document.getElementById('btn-share');
+      const orig = btn.textContent;
+      btn.textContent = 'Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    }
+  } catch {}
 });
 </script>
 </body>
