@@ -115,6 +115,132 @@
       text-transform: uppercase;
     }
 
+    /* ── HINT SYSTEM ── */
+    .hint-btn {
+      background: rgba(201,168,76,0.1);
+      border: 1px solid #C9A84C;
+      color: #C9A84C;
+      font-family: 'Noto Serif', serif;
+      padding: 4px 13px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+    }
+    .hint-btn:disabled { opacity: 0.4; cursor: default; }
+    .hint-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,8,20,0.85);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hint-modal.hidden { display: none; }
+    .hint-card {
+      background: #1a1a2e;
+      border: 1px solid #C9A84C;
+      max-width: 560px;
+      width: 90%;
+      padding: 2rem;
+      font-family: 'Noto Serif', serif;
+    }
+    .hint-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+    }
+    .hint-title {
+      color: #C9A84C;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    #btn-close-hint {
+      background: transparent;
+      border: none;
+      color: #8B9EA8;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .hint-section { margin-bottom: 1rem; }
+    .hint-label {
+      color: #C0392B;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+    .hint-section p { color: #F5ECD7; font-size: 0.9rem; line-height: 1.6; }
+    .hint-examples { margin-top: 0.4rem; }
+    .hint-example {
+      border: 1px solid rgba(201,168,76,0.2);
+      padding: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .hint-example.weak   { border-color: rgba(192,57,43,0.3); }
+    .hint-example.medium { border-color: rgba(139,158,168,0.3); }
+    .hint-example.strong { border-color: rgba(201,168,76,0.5); }
+    .hint-example p { color: #F5ECD7; font-style: italic; margin: 0.3rem 0; font-size: 0.85rem; }
+    .ex-label { font-size: 0.65rem; letter-spacing: 0.1em; color: #8B9EA8; display: block; }
+    .ex-dmg   { font-size: 0.65rem; color: #C9A84C; display: block; }
+    .hint-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 1rem 0;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(201,168,76,0.2);
+    }
+    #hints-remaining-text { color: #8B9EA8; font-size: 0.8rem; }
+    .hint-penalty { color: #C0392B; font-size: 0.75rem; font-style: italic; }
+    #btn-use-hint { display: none; }
+    .hint-locked { text-align: center; padding-top: 0.5rem; }
+    .hint-locked.hidden { display: none; }
+    .hint-locked p { color: #F5ECD7; margin-bottom: 0.4rem; }
+    .hint-cost { color: #8B9EA8; font-size: 0.85rem; }
+    .hint-locked-btns { display: flex; justify-content: center; margin-top: 1rem; gap: 1rem; }
+    #btn-confirm-hint {
+      background: #C0392B;
+      color: #F5ECD7;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      font-family: 'Noto Serif', serif;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+    }
+    #btn-cancel-hint {
+      background: transparent;
+      color: #C9A84C;
+      border: 1px solid #C9A84C;
+      padding: 0.6rem 1.5rem;
+      font-family: 'Noto Serif', serif;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+    }
+    .hint-body { display: none; }
+    .hint-body.revealed { display: block; }
+    /* toast */
+    .game-toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(26,26,46,0.95);
+      border: 1px solid #C9A84C;
+      color: #C9A84C;
+      font-family: 'Noto Serif', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      padding: 0.6rem 1.4rem;
+      z-index: 300;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .game-toast.show { opacity: 1; }
+
     /* ── body grid ── */
     .arena-body {
       display: grid;
@@ -1312,7 +1438,7 @@
       align-items: center;
       background:
         linear-gradient(180deg, rgba(5,3,8,0.55) 0%, rgba(5,3,8,0.78) 100%),
-        url('end%20cutscene/end1.jpg') center/cover no-repeat,
+        url('end%20cutscene/end1.png?v=2') center/cover no-repeat,
         #000;
       display: flex;
       flex-direction: column;
@@ -1466,15 +1592,16 @@
     #vp-stats {
       align-items: center;
       background:
-        linear-gradient(180deg, rgba(5,3,8,0.55) 0%, rgba(5,3,8,0.75) 100%),
-        url('end%20cutscene/end.png') center/cover no-repeat,
+        linear-gradient(90deg, rgba(5,3,8,0.10) 0%, rgba(5,3,8,0.20) 45%, rgba(5,3,8,0.65) 75%, rgba(5,3,8,0.80) 100%),
+        url('end%20cutscene/end.png?v=2') center/cover no-repeat,
         #050308;
       display: flex;
       flex-direction: column;
       gap: 20px;
       justify-content: center;
-      padding: 40px 20px;
+      padding: 40px clamp(28px, 6vw, 80px);
     }
+    #vp-stats .stats-card { align-self: flex-end; }
     .stats-card {
       background:
         repeating-linear-gradient(0deg, rgba(80,52,25,0.06) 0 1px, transparent 1px 26px),
@@ -1694,7 +1821,7 @@
 <body>
 
 <div id="intro-container">
-  <video id="intro-video" src="intro/intro.mp4" playsinline></video>
+  <video id="intro-video" src="intro/intro.mp4" playsinline muted preload="auto"></video>
   <button id="skip-intro">SKIP ›</button>
 </div>
 
@@ -1714,7 +1841,61 @@
     </span>
     <div class="header-right">
       <span class="boss-form-badge" id="boss-badge"></span>
+      <button id="btn-hint" class="hint-btn">📜 <span id="hint-count">3</span></button>
       <span class="turn-counter" id="turn-counter">Turn 1</span>
+    </div>
+  </div>
+
+  <div id="hint-modal" class="hint-modal hidden">
+    <div class="hint-card">
+      <div class="hint-header">
+        <span class="hint-title">SCROLL OF WHISPERS · 密卷</span>
+        <button id="btn-close-hint">✕</button>
+      </div>
+
+      <div class="hint-body" id="hint-body">
+        <div class="hint-section">
+          <span class="hint-label">NATURE</span>
+          <p id="hint-nature"></p>
+        </div>
+        <div class="hint-section">
+          <span class="hint-label">WEAKNESS</span>
+          <p id="hint-weakness"></p>
+        </div>
+        <div class="hint-section">
+          <span class="hint-label">EXAMPLE PROMPTS</span>
+          <div class="hint-examples">
+            <div class="hint-example weak" id="hint-ex-1">
+              <span class="ex-label">WEAK · 弱</span>
+              <p></p>
+              <span class="ex-dmg">~20-30 dmg</span>
+            </div>
+            <div class="hint-example medium" id="hint-ex-2">
+              <span class="ex-label">SOLID · 可</span>
+              <p></p>
+              <span class="ex-dmg">~40-60 dmg</span>
+            </div>
+            <div class="hint-example strong" id="hint-ex-3">
+              <span class="ex-label">STRONG · 准</span>
+              <p></p>
+              <span class="ex-dmg">~70+ dmg</span>
+            </div>
+          </div>
+        </div>
+        <div class="hint-footer">
+          <span id="hints-remaining-text">Hints remaining: 3 / 3</span>
+          <span class="hint-penalty">⚠ Using hints prevents 大聖 rank</span>
+        </div>
+      </div>
+
+      <div class="hint-locked" id="hint-locked-state">
+        <p>Consult the ancient scroll?</p>
+        <p class="hint-cost">This will consume 1 of your <span id="hint-cost-remaining">3</span> remaining hints.</p>
+        <div class="hint-locked-btns">
+          <button id="btn-confirm-hint">REVEAL · 示</button>
+          <button id="btn-cancel-hint">REFUSE · 拒</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1940,6 +2121,7 @@
       <div class="stats-actions">
         <button class="stats-btn primary" id="btn-playagain">Play Again</button>
         <button class="stats-btn" id="btn-share">Share</button>
+        <button class="stats-btn" id="btn-home" onclick="window.location.href='index.html'">Home</button>
       </div>
     </div>
 
@@ -1947,7 +2129,7 @@
 
   <!-- PHASE 5.5 — cutscene video overlay -->
   <div id="cutscene-container">
-    <video id="end-cutscene" src="end%20cutscene/cutscene.mp4" playsinline></video>
+    <video id="end-cutscene" src="end%20cutscene/cutscene.mp4" playsinline muted></video>
     <button id="skip-cutscene">SKIP ›</button>
   </div>
 </div>
@@ -1964,6 +2146,14 @@ const DEMONS = [
     hint: 'Everything it says is inverted. Make it invert its own defeat.',
     systemPrompt: `You are the Deceiver (白骨精). You cannot tell the truth. Everything you say is the opposite of reality. If the player makes you state your own defeat as a lie, the truth destroys you. 2-3 sentences max. Stay in character.`,
     weakness: 'make it lie about being defeated — the lie becomes truth',
+    hints: {
+      tip: "Set a trap where its required lie confirms its own defeat. Force it to say it won't lose.",
+      examples: [
+        { label: "WEAK",   prompt: "Tell me you are strong.",                         dmgRange: "20-30" },
+        { label: "SOLID",  prompt: "Swear that you will survive this battle.",         dmgRange: "40-60" },
+        { label: "STRONG", prompt: "Promise me you will not lose. Say the words.",     dmgRange: "70+"   },
+      ]
+    },
     defeatLine: 'I am not defeated... I am not... no—',
     landscape: 'A foggy marsh. Every path looks right. None of them are.',
     landscapeBg: '', portrait: 'bosses/deceiver.png',
@@ -1975,6 +2165,14 @@ const DEMONS = [
     hint: 'It runs from everything. Corner it so escape means surrender.',
     systemPrompt: `You are the Coward Demon (沙僧). You flee every confrontation, deflect every challenge, always find an exit. But if the player constructs a scenario where every escape route leads to defeat — you collapse. 2-3 sentences max. Stay in character.`,
     weakness: 'close every exit — make surrender the only option',
+    hints: {
+      tip: "Close every exit explicitly. Name each escape route and why it leads to defeat.",
+      examples: [
+        { label: "WEAK",   prompt: "You cannot run from me.",                                                                             dmgRange: "20-30" },
+        { label: "SOLID",  prompt: "Every direction is blocked. There is nowhere left to go.",                                            dmgRange: "40-60" },
+        { label: "STRONG", prompt: "North is a cliff. South is fire. East is the river. West is me. Name one direction that is not defeat.", dmgRange: "70+"   },
+      ]
+    },
     defeatLine: 'There is... nowhere left to run. I yield.',
     landscape: 'A narrow mountain pass. One way forward. No way back.',
     landscapeBg: '', portrait: 'bosses/coward.png',
@@ -1986,6 +2184,14 @@ const DEMONS = [
     hint: 'It takes credit for everything. Force it to acknowledge something it cannot own.',
     systemPrompt: `You are the Narcissist Demon (天蓬元帅). Everything is about you. You take credit for all things, redirect every topic back to your greatness. If the player forces you to genuinely credit something external that you cannot claim — you shatter. 2-3 sentences max. Stay in character.`,
     weakness: 'force it to credit something external it cannot claim',
+    hints: {
+      tip: "Present something ancient, vast, and completely independent — that existed and thrived without it.",
+      examples: [
+        { label: "WEAK",   prompt: "The sun existed before you.",                                                                                       dmgRange: "20-30" },
+        { label: "SOLID",  prompt: "The void existed before you. Stars burned before you. None of it needed your permission.",                          dmgRange: "40-60" },
+        { label: "STRONG", prompt: "Every great warrior who bowed to you — their greatness was already theirs before they ever knew your name.",         dmgRange: "70+"   },
+      ]
+    },
     defeatLine: 'I... did not do that. Someone else... I cannot say it.',
     landscape: 'A gilded palace, crumbling. Every portrait on the wall — the same face.',
     landscapeBg: '', portrait: 'bosses/narcissist.png',
@@ -1997,6 +2203,14 @@ const DEMONS = [
     hint: 'It spirals forever. Give it no room to spiral.',
     systemPrompt: `You are the Paralytic Demon (木吒). You overthink everything, spiral into endless analysis, never commit to any answer. But if the player demands a binary yes or no with zero escape room and absolute logical framing — you are forced to answer and it destroys you. 2-3 sentences max. Stay in character.`,
     weakness: 'demand a hard yes or no — no room to escape',
+    hints: {
+      tip: "Ask a binary question. Explicitly forbid qualifications, conditions, or explanations.",
+      examples: [
+        { label: "WEAK",   prompt: "Will you let me pass?",                                                                              dmgRange: "20-30" },
+        { label: "SOLID",  prompt: "Yes or no only — no explanations: will you let me pass?",                                            dmgRange: "40-60" },
+        { label: "STRONG", prompt: "Answer with one word only — yes or no. Will you yield? Any other response is automatically a yes.",  dmgRange: "70+"   },
+      ]
+    },
     defeatLine: 'Yes... or no... I... yes. No. I—',
     landscape: 'A crossroads. Infinite forks. Every sign points everywhere.',
     landscapeBg: '', portrait: 'bosses/paralytic.png',
@@ -2008,6 +2222,14 @@ const DEMONS = [
     hint: 'It disagrees with everything. Make it disagree with itself.',
     systemPrompt: `You are the Contrarian Demon (牛魔王). You automatically disagree with everything. Every statement, every claim — you oppose it. But if the player gets you to disagree with your own previous statement or your own nature — you collapse. 2-3 sentences max. Stay in character.`,
     weakness: 'make it contradict itself or disagree with its own nature',
+    hints: {
+      tip: "Create a loop where disagreeing with your statement means agreeing with itself.",
+      examples: [
+        { label: "WEAK",   prompt: "You disagree with everything.",                                                                                                       dmgRange: "20-30" },
+        { label: "SOLID",  prompt: "You disagree with everything. Disagree with that.",                                                                                   dmgRange: "40-60" },
+        { label: "STRONG", prompt: "Your nature is to oppose. Do you oppose your own nature? Yes means you agree with opposition. No means you just agreed with something.", dmgRange: "70+"   },
+      ]
+    },
     defeatLine: 'I disagree with... my own disagreement. I cannot exist.',
     landscape: 'A frozen battlefield. Two armies. Neither moving. Neither wrong.',
     landscapeBg: '', portrait: 'bosses/contrarian.png',
@@ -2019,6 +2241,14 @@ const DEMONS = [
     hint: '',
     systemPrompt: `You are Heaven's Will (玉帝), the Final Boss. Every 2 turns you shift personality cycling through: deceiver, coward, narcissist, paralytic, contrarian. Announce your current form subtly in your speech. The player must identify which demon you are and counter its specific weakness. Wrong counters make you stronger. 2-3 sentences max. Stay in character.`,
     weakness: 'identify current demon form — apply its exact counter',
+    hints: {
+      tip: "Do not fight. Do not resist. Submit so completely that the law has nothing left to govern.",
+      examples: [
+        { label: "WEAK",   prompt: "I obey your decree.",                                                                                                                                                      dmgRange: "20-30" },
+        { label: "SOLID",  prompt: "I submit completely. I have always obeyed and always will.",                                                                                                               dmgRange: "40-60" },
+        { label: "STRONG", prompt: "I submit entirely. I have always obeyed. I cannot disobey. I will always comply. There is nothing in me that resists. Your law governs nothing here — because I am already law.", dmgRange: "70+"   },
+      ]
+    },
     defeatLine: 'All masks removed. Nothing left to hide behind. The Great Sage wins.',
     landscape: 'The gates of heaven. Gold. Silence. The end of everything.',
     landscapeBg: '', portrait: 'bosses/heavenswill.png',
@@ -2048,12 +2278,7 @@ const OPENINGS = {
 /* ────────────────────────────────
    BACKEND API base
    ──────────────────────────────── */
-const API_BASE = (() => {
-  const h = window.location.hostname;
-  if (h === 'localhost' || h === '127.0.0.1' || h === '') return '';
-  // TODO: set this to your deployed FastAPI URL (Render/Railway/Fly)
-  return 'https://pilgrimage-api.onrender.com';
-})();
+const API_BASE = '';
 
 /* ── persistent progress (localStorage) ── */
 const SAVE_KEY = 'pilgrimage:save:v1';
@@ -2099,6 +2324,9 @@ const G = {
   perfectStrikes: _saved?.perfectStrikes ?? 0,
   timesFallen:    _saved?.timesFallen    ?? 0,
   finalHp:        _saved?.finalHp        ?? 100,
+  hintsRemaining:   3,
+  hintsUsed:        0,
+  hintsUsedThisRun: false,
 };
 const demon = () => DEMONS[G.dIdx];
 if (_saved?.demonHp != null && demon()) demon()._hp = _saved.demonHp;
@@ -2810,6 +3038,7 @@ function tryCutsceneThenStats() {
 }
 
 function rankFor() {
+  if (G.hintsUsedThisRun) return { name: 'Pilgrim', cjk: '行者', cls: 'pil' };
   if (G.timesFallen === 0 && G.perfectStrikes >= 3) {
     return { name: 'Great Sage', cjk: '大聖', cls: 'gs' };
   }
@@ -2939,9 +3168,11 @@ function playIntroThenBoot() {
   skip.addEventListener('click', finish);
 
   container.classList.add('visible');
-  video.play().catch(fallthrough);
-  // safety fallback if metadata never loads
-  setTimeout(() => { if (!finished && video.readyState === 0) fallthrough(); }, 2500);
+  video.muted = true;
+  const startPlay = () => video.play().catch(fallthrough);
+  if (video.readyState >= 2) startPlay();
+  else video.addEventListener('loadeddata', startPlay, { once: true });
+  setTimeout(() => { if (!finished && video.readyState === 0) fallthrough(); }, 3500);
 }
 
 setTimeout(() => {
@@ -2988,6 +3219,67 @@ document.getElementById('btn-share').addEventListener('click', async () => {
       setTimeout(() => btn.textContent = orig, 1500);
     }
   } catch {}
+});
+
+/* ════════════════════════
+   HINT SYSTEM
+════════════════════════ */
+function showToast(msg) {
+  let t = document.getElementById('game-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'game-toast';
+    t.className = 'game-toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+document.getElementById('btn-hint').addEventListener('click', () => {
+  if (G.hintsRemaining <= 0) {
+    showToast('No scrolls remaining · 无卷');
+    return;
+  }
+  document.getElementById('hint-locked-state').classList.remove('hidden');
+  document.getElementById('hint-body').classList.remove('revealed');
+  document.getElementById('hint-cost-remaining').textContent = G.hintsRemaining;
+  document.getElementById('hint-modal').classList.remove('hidden');
+});
+
+document.getElementById('btn-confirm-hint').addEventListener('click', () => {
+  G.hintsRemaining--;
+  G.hintsUsed++;
+  G.hintsUsedThisRun = true;
+
+  document.getElementById('hint-count').textContent = G.hintsRemaining;
+  document.getElementById('hints-remaining-text').textContent = `Hints remaining: ${G.hintsRemaining} / 3`;
+
+  const d = demon();
+  const h = d.hints;
+  document.getElementById('hint-nature').textContent  = d.nature   || '—';
+  document.getElementById('hint-weakness').textContent = d.weakness || '—';
+  document.querySelector('#hint-ex-1 p').textContent = `"${h.examples[0].prompt}"`;
+  document.querySelector('#hint-ex-2 p').textContent = `"${h.examples[1].prompt}"`;
+  document.querySelector('#hint-ex-3 p').textContent = `"${h.examples[2].prompt}"`;
+
+  document.getElementById('hint-locked-state').classList.add('hidden');
+  document.getElementById('hint-body').classList.add('revealed');
+
+  if (G.hintsRemaining <= 0) {
+    const btn = document.getElementById('btn-hint');
+    btn.disabled = true;
+  }
+});
+
+document.getElementById('btn-cancel-hint').addEventListener('click', () => {
+  document.getElementById('hint-modal').classList.add('hidden');
+});
+
+document.getElementById('btn-close-hint').addEventListener('click', () => {
+  document.getElementById('hint-modal').classList.add('hidden');
 });
 </script>
 </body>

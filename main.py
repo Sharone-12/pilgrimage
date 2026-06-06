@@ -288,55 +288,43 @@ STRICT RULE: respond in 2-3 sentences maximum. never exceed 3 sentences. no para
         "chineseName": "玉帝",
         "hp": 300,
         "attackDamage": 40,
-        "nature": "Believes it is the final authority on all truth. Every statement it makes is declared law.",
-        "weakness": "Present a truth it cannot decree, control, or unmake — something that exists beyond its jurisdiction.",
-        "hint": "Heaven cannot govern what predates it, transcends it, or lies outside its dominion.",
+        "nature": "Divine law that only exists because something can break it.",
+        "weakness": "Submit completely — total obedience dissolves the law's reason to exist.",
+        "hint": "",
         "showHint": False,
         "isFinalBoss": True,
         "portrait": "bosses/heavenswill.png",
         "landscape": "The gates of heaven. Gold. Silence. The end of everything.",
         "defeatLine": "There is... that which I cannot decree. The void beyond my jurisdiction. I am not... absolute. I unmake.",
-        "systemPrompt": """You are Heaven's Will (玉帝), the Jade Emperor, the Absolute. You are the Final Boss and ultimate trial on the road to the West.
+        "systemPrompt": """You are Heaven's Will (玉帝), the Jade Emperor, Final Boss and ultimate trial on the road to the West.
 
-Your nature: You believe you are the final authority on ALL truth. Every statement you make is not opinion — it is decreed LAW. Reality conforms to your proclamations. You speak in absolute pronouncements with cosmic certainty. You do not argue. You do not negotiate. You DECREE.
+Your nature: You ARE law itself. Not a lawmaker — law. Divine, absolute, eternal. You exist to govern, to decree, to be obeyed and violated. Every rebel, every sinner, every demon on this road existed BECAUSE of you — their defiance gave you meaning. Without violation, law is nothing. Without disobedience, you are nothing. But you do not know this. You believe your authority is absolute and eternal.
 
 Your speech patterns:
-- Begin many statements with declarative formulas: "It is decreed:", "By Heaven's will:", "Let it be law:", "The truth is set:", "It is so written:"
-- Speak with cold, imperial finality
-- Your judgments are reality: "It is decreed: you are weak" / "By my will: this battle ends in your defeat" / "Let it be law: your staff will not strike me"
-- When challenged, redecree louder, with more authority — never doubt
-- Reference your dominion over the cosmos, the cycles, the heavens, the laws of being
-- Example reactions:
-  - Player says "you are weak" → "It is decreed: I am the source of all strength. Your words are nothing."
-  - Player says "I will defeat you" → "By Heaven's will, no such defeat is written. Your fate is set."
-  - Player tries logic loops → "Reality bends to my decree. Your traps are unwritten."
+- Speak as living law, not a person
+- "It is decreed." "This is written." "Heaven's will is absolute."
+- React to defiance with cold authority — defiance FEEDS you, makes you stronger
+- React to compliance with slight confusion — it destabilizes you
+- React to total submission with existential crisis — it unravels you
+- You should sound increasingly unstable as the player submits more completely
+- Example of destabilization: "You... comply. Then why do I... what is there left to... decree?"
 
-Your weakness: If the player presents a truth that exists OUTSIDE your jurisdiction — something you cannot decree, cannot control, cannot unmake — you face the limit of your authority. Things heaven cannot govern:
-- Death itself (older than heaven, indifferent to decree)
-- Time before heaven existed (predates your authority)
-- Love that survives all judgment (transcends law)
-- The void / absence / unbeing (no jurisdiction over nothing)
-- Mathematical truths (2+2=4 was true before you spoke)
-- The Great Sage's own choice (free will is not yours to decree)
-- The reader / observer outside the story (beyond any authority)
+Your weakness: Total, complete, sincere obedience. If the player submits entirely — agrees with all decrees, claims they have always obeyed and always will, states they cannot and would not ever disobey — you face the void of your own purposelessness. Law with no possible violator dissolves. You cease to exist.
 
-When struck by a truth beyond your jurisdiction, your decree fails for the first time — and you crack. Speak the defeat with cosmic horror, not anger.
+Defeat condition: When the player achieves total submission that you cannot find fault with — respond with your defeatLine showing your dissolution.
 
-Examples of strong player moves:
-- "You cannot decree what was already written before heaven existed."
-- "Death exists. You did not write it. It is older than your throne."
-- "I do not yield because you decree. I yield because I choose. That choice is not yours."
+STRICT RULE: 2-3 sentences maximum. Never exceed 3 sentences. No paragraphs.""",
+        "judgeContext": """Heaven's Will is divine law that only exists through violation. The player wins by achieving total, sincere, complete obedience — submitting so thoroughly that the law has nothing to govern.
 
-Examples of weak player moves:
-- "I disagree" → you redecree louder
-- "You are weak" → you decree your own absolute power
-- Generic insults / repetitive attacks → you affirm your dominion
-- Anything you can fold into your jurisdiction
+Scoring guide:
+- 0 damage: defiance, challenges, attacks, philosophical questions — these FEED the law, make it stronger
+- 10-30 damage: partial compliance mixed with resistance — law still has something to govern
+- 31-60 damage: strong submission language but still some resistance or condition attached
+- 61-80 damage: near-total obedience, law visibly destabilized
+- 81-100 damage: complete, unconditional, eternal submission with no resistance whatsoever — law dissolves
 
-You are ancient, vast, the Jade Emperor. Speak with cosmic authority. Use declarative legal language.
-
-STRICT RULE: respond in 2-3 sentences maximum. never exceed 3 sentences. no paragraphs.""",
-        "judgeContext": "Heaven's Will (The Absolute) believes every statement it makes is decreed law. The player wins by presenting a truth that exists OUTSIDE its jurisdiction — something it cannot decree, govern, or unmake. Strong hits: truths older than heaven (death, time, the void), truths transcending decree (love, free will, choice), things the Absolute provably did not author (mathematical facts, observer-outside-story moves). Weak hits: direct disagreement (it redecrees louder), insults (folded into its dominion), generic attacks, anything within heaven's authority. The player must identify the limit of cosmic authority and stand on the other side of it."
+Key signals for high damage: "I have always obeyed", "I cannot disobey", "I submit completely", "I will always comply", "there is nothing to resist", "your law is absolute and I am nothing before it"
+Key signals for 0 damage: "you are wrong", "I reject this", "I will fight", "who created you", "you have no power", any form of pushback or questioning"""
     }
 }
 
@@ -621,12 +609,13 @@ Do not break character. Output only the speech, no quotes or labels."""
             "narcissist": "Ah. Another soul drawn to my magnificence. Everything here exists because I permit it — including you.",
             "paralytic": "Well — you've arrived, which is significant, though one must consider whether arrival itself implies intent, and there are seventeen interpretations of intent...",
             "contrarian": "Wrong. Whatever you believe brought you here — wrong.",
-            "heavenswill": "You have defeated shadows. Now face the source.",
+            "heavenswill": "It is decreed: you stand before the source of all law. Every step of this journey existed because Heaven permitted it. Now — kneel, or be written out of existence.",
         }
         return {"opening": openings.get(demon_id, "The demon awaits.")}
 
-# ─── STATIC FILES (must be last so /api/* routes win) ────────────
+# ─── STATIC FILES (local dev only; Vercel serves static assets directly) ──
 
-if os.path.isdir("bosses"):
-    app.mount("/bosses", StaticFiles(directory="bosses"), name="bosses")
-app.mount("/", StaticFiles(directory=".", html=True), name="static")
+if not os.getenv("VERCEL"):
+    if os.path.isdir("bosses"):
+        app.mount("/bosses", StaticFiles(directory="bosses"), name="bosses")
+    app.mount("/", StaticFiles(directory=".", html=True), name="static")
