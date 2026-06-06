@@ -1280,7 +1280,7 @@ setTimeout(() => {
 document.getElementById('btn-begin').addEventListener('click', () => {
   document.body.style.transition = 'opacity 0.8s ease';
   document.body.style.opacity = '0';
-  setTimeout(() => window.location.href = 'game.html', 800);
+  setTimeout(() => window.location.href = 'game.html?intro=1', 800);
 });
 
 document.getElementById('btn-guide').addEventListener('click', () => {
