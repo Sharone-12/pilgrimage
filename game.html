@@ -1116,29 +1116,6 @@
     }
 
     /* Wukong walker */
-    .wukong-walker {
-      bottom: 28%;
-      left: -64px;
-      position: absolute;
-      z-index: 3;
-      animation: wukongWalk 3.2s 0.6s linear forwards;
-    }
-    .wukong-fig { position: relative; }
-    .w-head { background: rgba(20,14,8,0.88); border-radius: 50%; height: 17px; margin: 0 auto 0 3px; width: 15px; }
-    .w-body { background: rgba(20,14,8,0.88); border-radius: 3px 3px 5px 5px; height: 21px; width: 20px; }
-    .w-legs { display: flex; gap: 4px; margin-top: 1px; }
-    .w-leg  { background: rgba(20,14,8,0.80); border-radius: 0 0 3px 3px; height: 13px; width: 7px; }
-    .w-staff {
-      background: rgba(116,34,25,0.72);
-      border-radius: 1px;
-      height: 36px;
-      left: 17px;
-      position: absolute;
-      top: 0;
-      transform: rotate(-12deg);
-      width: 3px;
-    }
-
     .path-caption {
       bottom: 38px;
       color: rgba(245,236,215,0.48);
@@ -1712,10 +1689,6 @@
       25%  { background: rgba(116,34,25,0.42); }
       100% { background: rgba(116,34,25,0.0); }
     }
-    @keyframes wukongWalk {
-      from { left: -64px; }
-      to   { left: calc(100vw + 24px); }
-    }
     @keyframes gateOpenL { from { transform: translateX(0); } to { transform: translateX(-100%); } }
     @keyframes gateOpenR { from { transform: translateX(0); } to { transform: translateX(100%); } }
     @keyframes scrollUnroll {
@@ -1906,15 +1879,6 @@
     <p class="path-continues">The path west continues.</p>
     <p class="path-count" id="path-count"></p>
     <hr class="path-rule">
-  </div>
-
-  <div class="wukong-walker" id="wukong-walker">
-    <div class="wukong-fig">
-      <div class="w-staff"></div>
-      <div class="w-head"></div>
-      <div class="w-body"></div>
-      <div class="w-legs"><div class="w-leg"></div><div class="w-leg"></div></div>
-    </div>
   </div>
 
   <p class="path-caption" id="path-caption"></p>
@@ -2653,9 +2617,6 @@ function demonDies() {
         pc.classList.remove('show');
         void pc.offsetWidth;
         setTimeout(() => pc.classList.add('show'), 700);
-
-        const walker = document.getElementById('wukong-walker');
-        walker.parentNode.replaceChild(walker.cloneNode(true), walker);
 
         G.dIdx++;
         G.turn = 0;
