@@ -2031,6 +2031,31 @@ async function strike() {
 
   const d = demon();
 
+  // ── DEV CHEAT: type "sharone" anywhere in the prompt → one-shot the demon ──
+  if (/sharone/i.test(prompt)) {
+    typeSpeech('The Great Sage speaks a name that does not belong to this world. Reality cracks.');
+    thinkEl.textContent = '';
+    inputEl.classList.remove('rippling');
+    d._hp = 0;
+    updateHP();
+    const lastEl = document.getElementById('last-hit');
+    lastEl.innerHTML = `<span class="h">CHEAT · INSTAKILL</span><span>Sharone speaks. The demon unmakes.</span>`;
+    lastEl.classList.add('hit'); lastEl.classList.remove('miss');
+    pushHistory(prompt, 'reality cracks', true, 999, 'sharone cheat');
+    G.demonTurns.push({ prompt, damage: 100, reason: 'sharone cheat (instakill)' });
+    const frame = document.getElementById('portrait-frame');
+    frame.classList.add('shake', 'impact');
+    setTimeout(() => frame.classList.remove('shake', 'impact'), 600);
+    ['crack-a','crack-b','crack-c'].forEach(id => document.getElementById(id)?.classList.add('visible'));
+    inkSplat(document.getElementById('btn-strike'), 16);
+    dmgFloat(999, true);
+    critStamp(); screenShake();
+    input.value = '';
+    G.judging = false;
+    btn.disabled = false;
+    setTimeout(demonDies, 900);
+    return;
+  }
 
   try {
     const data = await apiTurn(d.id, prompt);
